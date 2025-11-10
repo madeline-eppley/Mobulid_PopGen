@@ -358,6 +358,22 @@ first off, `--write_single_snp` that we just did filtered for linkage. from the 
 
 let's use vcftools to filter for loci that don't meet a minimum depth, loci that aren't present in most individuals, and individuals with overall poor coverage. 
 
+
+### filtering results
+
+##### individuals
+unfortunately it looks like our BYC_RMT_59 sample didn't pass our filtering methods. we'll have to remove it. 
+
+```bash
+(base) [eppley.m@explorer-02 vcftools_filtered]$ cd n2_p1
+(base) [eppley.m@explorer-02 n2_p1]$ ls
+minDP10_maxmiss0.8_filtInd.recode.vcf  minDP10_maxmiss0.8.recode.vcf  minDP10.recode.vcf  missingness.imiss  remove_individuals.txt
+(base) [eppley.m@explorer-02 n2_p1]$ cat remove_individuals.txt 
+INDV
+BYC_RMT_59
+```
+
+
 ```bash
 #!/bin/bash
 
@@ -413,5 +429,4 @@ vcftools --vcf ${OUTDIR}/minDP10_maxmiss0.8.recode.vcf \
 ## pop structure time!!!
 
 
-however, what if we have long-range linkage? these SNPs would not be in the same locus, but would be linked. to deal with these in the past, i've used single value decomposition (SVD) which uses both clumping and pruning in order to thin SNPs in long-range linkage with each other. 
 
