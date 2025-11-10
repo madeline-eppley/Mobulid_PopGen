@@ -2,7 +2,7 @@
 
 we are working with bycatch samples from the high seas for the species Mobula tarapacana. We have 15 RAD-sequenced samples that were collected between ~2018-2022. 
 
-first things first! here's the endangered Mobula tarapacana, or chilean devil ray. wide-randing tropical and temperate sea species.
+first things first! here's the [critically endangered](https://www.iucnredlist.org/es/species/60199/279077133) Mobula tarapacana, or the sicklefin devil ray. wide-randing tropical and temperate sea species.
 
 <img width="500" height="412" alt="image" src="https://github.com/user-attachments/assets/93c78dfe-9f71-4f1d-b10d-b7eeeed9556a" />
 
