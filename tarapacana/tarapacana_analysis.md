@@ -281,6 +281,7 @@ Genotyped 174775 loci:
 
 #### cstacks output
 
+```bash
 BEGIN cov_per_sample
 # Depths of Coverage for Processed Samples
 sample	loci assembled	depth of cov	max cov	number reads incorporated	% reads incorporated
@@ -300,7 +301,7 @@ BYC_RMT_59	123544	10.05	308	1232876	80.1
 BYCI_RMT_69	133092	37.07	702	4889100	87.0
 BYCI_RMT_71	133038	20.75	451	2738769	85.6
 END cov_per_sample
-
+```
 
 ## running populations
 
@@ -357,6 +358,56 @@ first off, `--write_single_snp` that we just did filtered for linkage. from the 
 
 let's use vcftools to filter for loci that don't meet a minimum depth, loci that aren't present in most individuals, and individuals with overall poor coverage. 
 
+```bash
+#!/bin/bash
+
+#SBATCH --partition=lotterhos
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=12:00:00
+#SBATCH --job-name=vcftools
+#SBATCH --output=vcftools_filter_%j.log
+#SBATCH --error=vcftools_filter_%j.err
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=eppley.m@northeastern.edu
+
+module load vcftools # this is just globally available on explorer, slay
+
+# input VCF from stacks population run
+INPUT_VCF="/projects/gatins/2025_Mobulid/tarapacana/populations/n2_p1/populations.snps.vcf"
+
+OUTDIR="/projects/gatins/2025_Mobulid/tarapacana/vcftools_filtered/n2_p1"
+mkdir -p ${OUTDIR}
+
+# filter by minimum depth per genotype (minDP = 10)
+vcftools --vcf ${INPUT_VCF} \
+         --minDP 10 \
+         --recode --recode-INFO-all \
+         --out ${OUTDIR}/minDP10
+
+# filter for sites present in >= 80% of individuals
+vcftools --vcf ${OUTDIR}/minDP10.recode.vcf \
+         --max-missing 0.8 \
+         --recode --recode-INFO-all \
+         --out ${OUTDIR}/minDP10_maxmiss0.8
+
+# remove individuals with >40% missing data
+# 1: compute missingness per individual
+vcftools --vcf ${OUTDIR}/minDP10_maxmiss0.8.recode.vcf \
+         --missing-indv \
+         --out ${OUTDIR}/missingness
+
+# 2: generate a list of individuals to remove
+awk '$5 > 0.4 {print $1}' ${OUTDIR}/missingness.imiss > ${OUTDIR}/remove_individuals.txt
+
+# now filter out individuals
+vcftools --vcf ${OUTDIR}/minDP10_maxmiss0.8.recode.vcf \
+         --remove ${OUTDIR}/remove_individuals.txt \
+         --recode --recode-INFO-all \
+         --out ${OUTDIR}/minDP10_maxmiss0.8_filtInd
+```
 
 
 ## pop structure time!!!
