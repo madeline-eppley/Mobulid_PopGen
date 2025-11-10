@@ -204,6 +204,7 @@ using `cat populations.hapstats.tsv | grep -v "^#" | cut -f 1 | uniq | wc -l` in
 
 n2 = 81560 loci
 n3 = 81363 loci
+n4 = 81047 loci
 
 
 ## testing values of p (p = pops)
