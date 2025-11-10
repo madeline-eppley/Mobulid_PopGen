@@ -198,6 +198,10 @@ do
 done
 ```
 
+### summary table 
+
+using `cat populations.hapstats.tsv | grep -v "^#" | cut -f 1 | uniq | wc -l` in each folder of n2, n3, n4, etc.
+
 
 
 ## testing values of p (p = pops)
