@@ -53,6 +53,26 @@ BYC_RMT_06
 BYC_RMT_07
 0°54'00.0"S 92°13'48.0"W
 
+BYC_RMT_27
+2°39'00.0"N 84°37'00.1"W
+
+BYC_RMT_69
+4°19'00.1"N 144°24'00.0"W
+
+BYC_RMT_71
+4°36'00.0"S 179°52'48.0"E
+
+BYC_RMT_49
+2°24'00.0"N 90°04'48.0"W
+
+BYC_RMT_28
+3°21'00.0"N 92°06'00.0"W
+
+BYC_RMT_29
+0°21'00.0"N 82°19'58.8"W
+
+BYC_RMT_46
+1°46'12.0"N 84°48'00.0"W
 
 
 Inital test run of this denovo map script works! 
