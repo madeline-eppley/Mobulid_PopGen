@@ -31,6 +31,7 @@ BYCI_RMT_71	BYC
 ```
 
 Let's look at some of the lat/long info from the excel sheet (full version uploaded in /tarapacana
+
 BYC_RMM_30
 2°43'00.0"N 91°59'00.0"W
 
@@ -39,6 +40,18 @@ BYC_RMB_57
 
 BYC-RMB-56
 14°03'00.0"N 82°34'00.0"W
+
+BYC_RMO_45
+2°13'00.0"N 85°19'00.0"W
+
+BYC_RMT_04
+3°49'12.0"N 110°04'48.0"W
+
+BYC_RMT_06
+4°16'59.9"N 110°04'59.9"W
+
+BYC_RMT_07
+0°54'00.0"S 92°13'48.0"W
 
 
 
