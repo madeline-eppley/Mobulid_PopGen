@@ -282,7 +282,7 @@ mkdir -p /projects/gatins/2025_Mobulid/tarapacana/populations
 
 populations \
   -P /projects/gatins/2025_Mobulid/tarapacana/opt/n${OPT_N} \
-  -M /projects/gatins/2025_Mobulid/tarapacana/pop_maps/pop_map_15 \
+  -M /projects/gatins/2025_Mobulid/tarapacana/pop_maps/tarapacana_pop_map_15 \
   -r 0.80 \
   -p 15 \
   --min-maf 0.05 \
