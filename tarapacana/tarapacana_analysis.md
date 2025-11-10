@@ -202,6 +202,8 @@ done
 
 using `cat populations.hapstats.tsv | grep -v "^#" | cut -f 1 | uniq | wc -l` in each folder of n2, n3, n4, etc.
 
+n2 = 81560 loci
+n3 = 81363 loci
 
 
 ## testing values of p (p = pops)
@@ -346,5 +348,9 @@ populations \
 ```
 
 ## pop structure time!!!
+we need to make a rigorous plan for how we will deal with linkage, minor alleles, and missingness. all of these can bias population structure results. 
 
+first off, `--write_single_snp` will filter for some initial linkage. from the stacks manual - " Since STRUCTURE does not want linked loci, you will typically also supply the --write_single_snp flag so that you do not get more than one SNP per RAD locus (SNPs at the same RAD locus are almost certainly linked)." 
+
+however, what if we have long-range linkage? these SNPs would not be in the same locus, but would be linked. to deal with these in the past, i've used single value decomposition (SVD) which uses both clumping and pruning in order to thin SNPs in long-range linkage with each other. 
 
