@@ -7,6 +7,9 @@ files uploaded from melissa at
 ```
 
 then we have subfolders for each species, including tarapacana
+
+so this species is unique because we have all high-seas samples. we do have some lat/long info for some of the samples, however
+
 `pop_map_tarapacana`
 
 ```bash
@@ -26,6 +29,20 @@ BYC_RMT_59	BYC
 BYCI_RMT_69	BYC
 BYCI_RMT_71	BYC
 ```
+
+Let's look at some of the lat/long info from the excel sheet (full version uploaded in /tarapacana
+BYC_RMM_30
+2°43'00.0"N 91°59'00.0"W
+
+BYC_RMB_57
+1°26'00.0"N 82°26'00.0"W
+
+BYC-RMB-56
+14°03'00.0"N 82°34'00.0"W
+
+
+
+Inital test run of this denovo map script works! 
 
 ```bash
 #!/bin/bash
