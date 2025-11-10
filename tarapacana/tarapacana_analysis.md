@@ -1,7 +1,14 @@
-# Analysis steps for high seas samples tarapacana
+# Tarapacana RAD analysis
 
-## Stacks denovo map
-files uploaded from melissa at 
+we are working with bycatch samples from the high seas for the species Mobula tarapacana. We have 15 RAD-sequenced samples that were collected between ~2018-2022. 
+
+first things first! here's the Mobula tarapacana, or chilean devil ray
+<img width="1500" height="1237" alt="image" src="https://github.com/user-attachments/assets/93c78dfe-9f71-4f1d-b10d-b7eeeed9556a" />
+
+### ok now for the fun stuff!
+
+#### Stacks denovo map
+files uploaded from melissa and located here:
 ```bash
 /projects/gatins/2025_Mobulid_UCSC/RAD_all_combine_bycatch
 ```
