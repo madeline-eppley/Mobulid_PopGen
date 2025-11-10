@@ -196,3 +196,10 @@ do
 done
 ```
 
+
+
+## testing values of p (pop)
+now we want to get into population testing since we don't have pre-existing expectations about # of pops in the data set. 
+for our optimal catalog with `-m 3 -M 3 -n opt`, we are going to cycle through the populations with different pop maps that each have different groups of samples based on collection location. 
+
+
