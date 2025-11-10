@@ -8,7 +8,7 @@ files uploaded from melissa at
 
 then we have subfolders for each species, including tarapacana
 
-so this species is unique because we have all high-seas samples. we do have some lat/long info for some of the samples, however
+so this species is unique because we have all high-seas samples. we have lat/long info for 14/15 samples (BYC_RMT_59 is missing)
 
 `pop_map_tarapacana`
 
@@ -56,7 +56,7 @@ Let's look at some of the lat/long info from the excel sheet:
 
 based on this output, I think a good starting place would be 3 for populations, so I made a new pop map file
 
-this file has an eastern pacific (EST), central pacific (CTR), and western pacific group structure (WST)
+this file has an eastern pacific (EST), central pacific (CTR), and western pacific group structure (WST). we are missing for BYC_RMT_59, but I assigned it eastern to start and we will go from there. 
 
 ```bash
 cat > tarapacana_pop_map_3 << 'EOL'
@@ -78,6 +78,7 @@ BYCI_RMT_71 WST
 EOL
 ```
 
+I want to get an initial version of the denovo map up and working, and then we can go from there with parameter testing. 
 
 Inital test run of this denovo map script works! 
 
