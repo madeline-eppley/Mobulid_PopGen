@@ -134,22 +134,23 @@ ls -l /projects/gatins/2025_Mobulid/tarapacana
 ```
 
 ## optimizing parameters
-ok so from here, we've got stacks up and running and now we should focus on the parameter optimization
-We can determine the optimal params from the highest yield loci at the end of the pipeline
+ok so from here, we've got stacks up and running and now we should focus on the parameter optimization. We can determine the optimal params from the highest yield loci at the end of the pipeline. 
 
 #### stacks params
-Options: -m — Minimum depth of coverage required to create a stack (default 3).
--M — number of mismatches allowed between stacks within individuals (for ustacks).
--n — number of mismatches allowed between stacks between individuals (for cstacks).
--samples [path] — specify a path to the directory of samples (samples will be read from population map).
---popmap [path] — path to a population map file (format is "[name] TAB [pop]", one sample per line).
--o [path] — path to write pipeline output files.
--p,--min-populations — minimum number of populations a locus must be present in to process a locus (for populations; default: 1). -r,--min-samples-per-pop — minimum percentage of individuals in a population required to process a locus for that population (for populations; default: 0).
-
+**Options:**
+`-m` — Minimum depth of coverage required to create a stack (default 3).  
+`-M` — number of mismatches allowed between stacks within individuals (for ustacks).  
+`-n` — number of mismatches allowed between stacks between individuals (for cstacks).  
+`-samples [path]` — specify a path to the directory of samples (samples will be read from population map).  
+`--popmap [path]` — path to a population map file (format is "[name] TAB [pop]", one sample per line).  
+`-o [path]` — path to write pipeline output files.  
+`-p`,`--min-populations` — minimum number of populations a locus must be present in to process a locus (for populations; default: 1). 
+`-r`,`--min-samples-per-pop` — minimum percentage of individuals in a population required to process a locus for that population (for populations; default: 0). 
 
 Remy and I agree that -m 3 and -M 3 are default, let's keep those and instead vary parameter -n
 
 ```bash
+(base) [eppley.m@explorer-02 tarapacana]$ cat tarapacana_opt_n.sh 
 #!/bin/bash
 
 #SBATCH --partition=lotterhos
@@ -166,13 +167,10 @@ Remy and I agree that -m 3 and -M 3 are default, let's keep those and instead va
 
 export PATH=/projects/gatins/programs_explorer/stacks_2.68/bin:$PATH
 
-# Base directory for entire Mobulid project
-BASE_DIR="/projects/gatins/2025_Mobulid"
+# new dir for our opt folder
+mkdir -p /projects/gatins/2025_Mobulid/tarapacana/opt
 
-# new opt directory
-mkdir -p ${BASE_DIR}/tarapacana_opt
-
-# Parameters to test for n
+# parameters to test for n
 params="
 2
 3
@@ -181,26 +179,20 @@ params="
 6
 7"
 
-# now  denovo_map.pl for each n value
+# now denovo_map.pl for each n value
 for p in $params
 do
     echo "Running with n = ${p}"
+    mkdir -p /projects/gatins/2025_Mobulid/tarapacana/opt/n${p}
+    
     denovo_map.pl \
         -m 3 \
         -M 3 \
         -n ${p} \
         -T 32 \
-        -o ${BASE_DIR}/tarapacana_opt/n${p} \
+        -o /projects/gatins/2025_Mobulid/tarapacana/opt/n${p} \
         --popmap /projects/gatins/2025_Mobulid_UCSC/RAD_all_combined_bycatch/pop_map_tarapacana \
         --samples /projects/gatins/2025_Mobulid_UCSC/RAD_all_combined_bycatch/trimmed90
-done
-
-# results!
-echo "Done -  Loci counts:"
-for p in $params
-do
-    LOCI=$(grep -c "^>" ${BASE_DIR}/tarapacana_opt/n${p}/catalog.fa.gz)
-    echo "n${p}: ${LOCI} loci"
 done
 ```
 
