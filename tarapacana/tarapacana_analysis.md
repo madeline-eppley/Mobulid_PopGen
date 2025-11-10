@@ -257,6 +257,90 @@ BYC_RMT_59 15
 EOF
 ```
 
+
+### running populations for each pop map
+```bash
+#!/bin/bash
+
+#SBATCH --partition=lotterhos
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=32
+#SBATCH --mem=128G
+#SBATCH --time=48:00:00
+#SBATCH --job-name=tarapacana_pops
+#SBATCH --output=tarapacana_pops_%j.log
+#SBATCH --error=tarapacana_pops_%j.err
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=eppley.m@northeastern.edu
+
+export PATH=/projects/gatins/programs_explorer/stacks_2.68/bin:$PATH
+
+OPT_N=X
+
+mkdir -p /projects/gatins/2025_Mobulid/tarapacana/populations
+
+populations \
+  -P /projects/gatins/2025_Mobulid/tarapacana/opt/n${OPT_N} \
+  -M /projects/gatins/2025_Mobulid/tarapacana/pop_maps/pop_map_15 \
+  -r 0.80 \
+  -p 15 \
+  --min-maf 0.05 \
+  --write-single-snp \
+  --vcf \
+  --genepop \
+  --structure \
+  --fstats \
+  --hwe \
+  -O /projects/gatins/2025_Mobulid/tarapacana/populations/15_pops \
+  -t 30
+
+populations \
+  -P /projects/gatins/2025_Mobulid/tarapacana/opt/n${OPT_N} \
+  -M /projects/gatins/2025_Mobulid/tarapacana/pop_maps/tarapacana_pop_map_1 \
+  -r 0.80 \
+  -p 1 \
+  --min-maf 0.05 \
+  --write-single-snp \
+  --vcf \
+  --genepop \
+  --structure \
+  --fstats \
+  --hwe \
+  -O /projects/gatins/2025_Mobulid/tarapacana/populations/1_pops \
+  -t 30
+
+populations \
+  -P /projects/gatins/2025_Mobulid/tarapacana/opt/n${OPT_N} \
+  -M /projects/gatins/2025_Mobulid/tarapacana/pop_maps/tarapacana_pop_map_2 \
+  -r 0.80 \
+  -p 2 \
+  --min-maf 0.05 \
+  --write-single-snp \
+  --vcf \
+  --genepop \
+  --structure \
+  --fstats \
+  --hwe \
+  -O /projects/gatins/2025_Mobulid/tarapacana/populations/2_pops \
+  -t 30
+
+populations \
+  -P /projects/gatins/2025_Mobulid/tarapacana/opt/n${OPT_N} \
+  -M /projects/gatins/2025_Mobulid/tarapacana/pop_maps/tarapacana_pop_map_3 \
+  -r 0.80 \
+  -p 3 \
+  --min-maf 0.05 \
+  --write-single-snp \
+  --vcf \
+  --genepop \
+  --structure \
+  --fstats \
+  --hwe \
+  -O /projects/gatins/2025_Mobulid/tarapacana/populations/3_pops \
+  -t 30
+```
+
 ## pop structure time!!!
 
 
