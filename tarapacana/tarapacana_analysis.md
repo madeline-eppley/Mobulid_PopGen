@@ -30,7 +30,7 @@ BYCI_RMT_69	BYC
 BYCI_RMT_71	BYC
 ```
 
-Let's look at some of the lat/long info from the excel sheet (full version uploaded in /tarapacana
+Let's look at some of the lat/long info from the excel sheet:
 
 
 | Sample | Latitude | Longitude |
@@ -49,6 +49,34 @@ Let's look at some of the lat/long info from the excel sheet (full version uploa
 | BYC_RMT_28 | 3°21'00.0"N | 92°06'00.0"W |
 | BYC_RMT_29 | 0°21'00.0"N | 82°19'58.8"W |
 | BYC_RMT_46 | 1°46'12.0"N | 84°48'00.0"W |
+
+
+<img width="1447" height="572" alt="Screenshot 2025-11-10 at 10 09 19 AM" src="https://github.com/user-attachments/assets/44fcd6ce-b5f7-419b-9e82-4acdfe730970" />
+
+
+based on this output, I think a good starting place would be 3 for populations, so I made a new pop map file
+
+this file has an eastern pacific (EST), central pacific (CTR), and western pacific group structure (WST)
+
+```bash
+cat > tarapacana_pop_map_3 << 'EOL'
+BYC_RMB_56 EST
+BYC_RMB_57 EST
+BYC_RMM_30 EST
+BYC_RMO_45 EST
+BYC_RMT_04 CTR
+BYC_RMT_06 CTR
+BYC_RMT_07 EST
+BYC_RMT_27 EST
+BYC_RMT_28 EST
+BYC_RMT_29 EST
+BYC_RMT_46 EST
+BYC_RMT_49 EST
+BYC_RMT_59 EST
+BYCI_RMT_69 CTR
+BYCI_RMT_71 WST
+EOL
+```
 
 
 Inital test run of this denovo map script works! 
