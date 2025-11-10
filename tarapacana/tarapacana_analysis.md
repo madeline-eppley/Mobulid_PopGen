@@ -203,10 +203,12 @@ now we want to get into population testing since we don't have pre-existing expe
 for our optimal catalog with `-m 3 -M 3 -n opt`, we are going to cycle through the populations with different pop maps that each have different groups of samples based on collection location. 
 
 #### let's organize 🫡
-step 1: move a copy of the n=1 og pop map into the new pop map folder 
+step 1: move a copy of the n=1 og pop map into the new pop map folder and rename it to be pop_map_1 to make my life easier
+
 `cp /projects/gatins/2025_Mobulid_UCSC/RAD_all_combined_bycatch/pop_map_tarapacana /projects/gatins/2025_Mobulid/tarapacana/pop_maps/tarapacana_pop_map_1`
 
 and now repeat to do the same with our new n=3 pop map that we made earlier based on the high seas sampling locations
+
 `mv /projects/gatins/2025_Mobulid/tarapacana/tarapacana_pop_map_3 /projects/gatins/2025_Mobulid/tarapacana/pop_maps/`
 
 
