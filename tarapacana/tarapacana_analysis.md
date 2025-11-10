@@ -1,8 +1,8 @@
-# Tarapacana RAD analysis
+# Tarapacana RADseq analysis
 
 we are working with bycatch samples from the high seas for the species Mobula tarapacana. We have 15 RAD-sequenced samples that were collected between ~2018-2022. 
 
-first things first! here's the [critically endangered](https://www.iucnredlist.org/es/species/60199/279077133) Mobula tarapacana, or the sicklefin devil ray. wide-randing tropical and temperate sea species.
+first things first! here's the [critically endangered](https://www.iucnredlist.org/es/species/60199/279077133) Mobula tarapacana, or the sicklefin devil ray. wide-ranging tropical/temperate species.
 
 <img width="500" height="412" alt="image" src="https://github.com/user-attachments/assets/93c78dfe-9f71-4f1d-b10d-b7eeeed9556a" />
 
@@ -146,7 +146,7 @@ ok time to get serious. we've got stacks up and running and now we should focus 
 `-p`,`--min-populations` — minimum number of populations a locus must be present in to process a locus (for populations; default: 1). 
 `-r`,`--min-samples-per-pop` — minimum percentage of individuals in a population required to process a locus for that population (for populations; default: 0). 
 
-##### Remy and I agree that -m 3 and -M 3 are default, let's keep those and instead vary parameter -n
+#### Remy and I agree that -m 3 and -M 3 are default, let's keep those and instead vary parameter -n
 for some further proof beyond the BSB dataset, here's what [Paris et al 2017](https://besjournals.onlinelibrary.wiley.com/doi/epdf/10.1111/2041-210X.12775) says about stacks parameter space across 4 different datasets: "We recommend setting m high enough only to deny errantreads the status of a putative allele. We therefore do not sug-gest using a value for m > 5 and we have demonstrated herethat the default value of m3 was favourable for all test datasets"
 
 tldr: -m 3 is default and should be good here
@@ -235,7 +235,7 @@ BYCI_RMT_71 WST
 EOF
 ```
 
-so at this point, p=2 and p=3 are kind of the end of my educated "guessing" based on geography, so we will also examine the PCA with p=1 to check for signs of population structure. the last thing we can do is make every individual their OWN pop, and check the PCA there too. so let's make that pop map where every ind is it's own pop:
+so at this point, p=2 and p=3 are kind of the end of my educated "guessing" based on geography. we will also examine the PCA with p=1 to check for signs of population structure. the last thing we can do is make every individual their OWN pop, and check the PCA there too. so let's make that pop map where every ind is its own pop:
 
 ```bash
 cat > /projects/gatins/2025_Mobulid/tarapacana/pop_maps/pop_map_15 << 'EOF'
@@ -257,6 +257,6 @@ BYC_RMT_59 15
 EOF
 ```
 
-## pop structure timeeee!!! let's take a look
+## pop structure time!!!
 
 
