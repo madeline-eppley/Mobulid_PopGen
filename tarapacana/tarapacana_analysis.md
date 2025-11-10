@@ -269,6 +269,18 @@ EOF
 ### opt params populations test
 the n opt is 2 based on the loci yield. let's get the populations script running with this n value for our p=1 map. 
 
+#### gstacks output
+
+```bash
+Genotyped 174775 loci:
+  effective per-sample coverage: mean=26.4x, stdev=10.5x, min=10.2x, max=54.5x
+  mean number of sites per locus: 90.1
+  a consistent phasing was found for 73361 of out 81544 (90.0%) diploid loci needing phasing
+```
+
+
+  
+
 ```bash
 #!/bin/bash
 
@@ -286,12 +298,11 @@ the n opt is 2 based on the loci yield. let's get the populations script running
 
 export PATH=/projects/gatins/programs_explorer/stacks_2.68/bin:$PATH
 
-OPT_N=X
 
-mkdir -p /projects/gatins/2025_Mobulid/tarapacana/populations
+mkdir -p /projects/gatins/2025_Mobulid/tarapacana/populations/n2_p1
 
 populations \
-  -P /projects/gatins/2025_Mobulid/tarapacana/opt/n${OPT_N} \
+  -P /projects/gatins/2025_Mobulid/tarapacana/opt/n2 \
   -M /projects/gatins/2025_Mobulid/tarapacana/pop_maps/tarapacana_pop_map_1 \
   -r 0.80 \
   -p 1 \
@@ -302,98 +313,31 @@ populations \
   --structure \
   --fstats \
   --hwe \
-  -O /projects/gatins/2025_Mobulid/tarapacana/populations/1_pops \
+  -O /projects/gatins/2025_Mobulid/tarapacana/populations/n2_p1 \
   -t 30
+
 ```
+### MAF and LD filtered loci
+after running populations I counted loci with:
 
-
-### running populations for each pop map
 ```bash
-#!/bin/bash
-
-#SBATCH --partition=lotterhos
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=32
-#SBATCH --mem=128G
-#SBATCH --time=48:00:00
-#SBATCH --job-name=tarapacana_pops
-#SBATCH --output=tarapacana_pops_%j.log
-#SBATCH --error=tarapacana_pops_%j.err
-#SBATCH --mail-type=BEGIN,END,FAIL
-#SBATCH --mail-user=eppley.m@northeastern.edu
-
-export PATH=/projects/gatins/programs_explorer/stacks_2.68/bin:$PATH
-
-OPT_N=X
-
-mkdir -p /projects/gatins/2025_Mobulid/tarapacana/populations
-
-populations \
-  -P /projects/gatins/2025_Mobulid/tarapacana/opt/n${OPT_N} \
-  -M /projects/gatins/2025_Mobulid/tarapacana/pop_maps/tarapacana_pop_map_15 \
-  -r 0.80 \
-  -p 15 \
-  --min-maf 0.05 \
-  --write-single-snp \
-  --vcf \
-  --genepop \
-  --structure \
-  --fstats \
-  --hwe \
-  -O /projects/gatins/2025_Mobulid/tarapacana/populations/15_pops \
-  -t 30
-
-populations \
-  -P /projects/gatins/2025_Mobulid/tarapacana/opt/n${OPT_N} \
-  -M /projects/gatins/2025_Mobulid/tarapacana/pop_maps/tarapacana_pop_map_1 \
-  -r 0.80 \
-  -p 1 \
-  --min-maf 0.05 \
-  --write-single-snp \
-  --vcf \
-  --genepop \
-  --structure \
-  --fstats \
-  --hwe \
-  -O /projects/gatins/2025_Mobulid/tarapacana/populations/1_pops \
-  -t 30
-
-populations \
-  -P /projects/gatins/2025_Mobulid/tarapacana/opt/n${OPT_N} \
-  -M /projects/gatins/2025_Mobulid/tarapacana/pop_maps/tarapacana_pop_map_2 \
-  -r 0.80 \
-  -p 2 \
-  --min-maf 0.05 \
-  --write-single-snp \
-  --vcf \
-  --genepop \
-  --structure \
-  --fstats \
-  --hwe \
-  -O /projects/gatins/2025_Mobulid/tarapacana/populations/2_pops \
-  -t 30
-
-populations \
-  -P /projects/gatins/2025_Mobulid/tarapacana/opt/n${OPT_N} \
-  -M /projects/gatins/2025_Mobulid/tarapacana/pop_maps/tarapacana_pop_map_3 \
-  -r 0.80 \
-  -p 3 \
-  --min-maf 0.05 \
-  --write-single-snp \
-  --vcf \
-  --genepop \
-  --structure \
-  --fstats \
-  --hwe \
-  -O /projects/gatins/2025_Mobulid/tarapacana/populations/3_pops \
-  -t 30
+grep -v "^#" /projects/gatins/2025_Mobulid/tarapacana/populations/n2_p1/populations.hapstats.tsv | wc -l
 ```
+#### 73660 loci remain
 
-## pop structure time!!!
+
+
+## running vcftools for filtering loci
 we need to make a rigorous plan for how we will deal with linkage, minor alleles, and missingness. all of these can bias population structure results. 
 
-first off, `--write_single_snp` will filter for some initial linkage. from the stacks manual - " Since STRUCTURE does not want linked loci, you will typically also supply the --write_single_snp flag so that you do not get more than one SNP per RAD locus (SNPs at the same RAD locus are almost certainly linked)." 
+first off, `--write_single_snp` that we just did filtered for linkage. from the stacks manual - " Since STRUCTURE does not want linked loci, you will typically also supply the --write_single_snp flag so that you do not get more than one SNP per RAD locus (SNPs at the same RAD locus are almost certainly linked)." 
+
+let's use vcftools to filter for loci that don't meet a minimum depth, loci that aren't present in most individuals, and individuals with overall poor coverage. 
+
+
+
+## pop structure time!!!
+
 
 however, what if we have long-range linkage? these SNPs would not be in the same locus, but would be linked. to deal with these in the past, i've used single value decomposition (SVD) which uses both clumping and pruning in order to thin SNPs in long-range linkage with each other. 
 
