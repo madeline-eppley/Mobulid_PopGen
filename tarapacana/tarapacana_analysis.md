@@ -485,5 +485,71 @@ possible options:
 - these samples have an artifical effect like high missingness 
 - we have bad SNP filtering and should go back to the drawing board.
 
+#### missingness at the individual level
+Our BYC_RMB_56 and BYC_RMB_57 individuals have low missingness ~4% for 56 and ~.07% for 57, so it's not that! However BYC_RMT_29 is borderline ...
+
+```R
+# check missingness per ind
+gt <- extract.gt(vcf, element = "GT")
+ind_missing <- apply(gt, 2, function(x) mean(is.na(x) | x == "./."))
+snp_missing <- apply(gt, 1, function(x) mean(is.na(x) | x == "./."))
+summary(ind_missing)
+summary(snp_missing)
+
+sort(ind_missing, decreasing = TRUE)[1:14]
+```
+
+output
+```
+> sort(ind_missing, decreasing = TRUE)[1:14]
+ BYC_RMT_29  BYC_RMT_06  BYC_RMB_56 BYCI_RMT_71  BYC_RMM_30  BYC_RMT_27 
+0.338572906 0.077642192 0.040972079 0.031023785 0.030568769 0.030361944 
+ BYC_RMT_04  BYC_RMT_28  BYC_RMO_45  BYC_RMB_57  BYC_RMT_46  BYC_RMT_07 
+0.022647363 0.016504654 0.007797311 0.007487073 0.006866598 0.006287487 
+ BYC_RMT_49 BYCI_RMT_69 
+0.006204757 0.005729059 
+```
+
+overall the dataset looks pretty fire
+<img width="1671" height="1224" alt="image" src="https://github.com/user-attachments/assets/bfb12201-5987-408b-817f-ac05b228b1a1" />
+<img width="1671" height="1224" alt="image" src="https://github.com/user-attachments/assets/3194e64a-1684-4d86-a68c-c2f9b2c43d41" />
+
+#### cryptic speciation ...??
+I will note that these two samples were identified as species RMB (birostris) by the fishers who collected which I find odd. however the STRUCTURE results from the misidentification report clearly group those 2 samples with RMT with very high support (100 bootstrap values on phylogenetic tree). It seems possible to me that the scale of differentiation between the species in the phylogenetics study could obstruct some finer scale cryptic speciation within species?
+
+<img width="468" height="508" alt="image" src="https://github.com/user-attachments/assets/6e8cf2b2-876d-451f-8e95-7dbea792f300" />
+
+### relatedness 🙂‍↕️
+this would explain it all! 0.5 = an exact clone or identical twins. Here we have a value of 0.498 between RMB_56 and RMB_57. I think it's highly likely this was the same individual sampled twice. Manta rays usually have just 1 offspring at a time, and the chances of monozygotic twins are super low.
+
+<img width="2013" height="1596" alt="image" src="https://github.com/user-attachments/assets/20e7cccd-55a7-4187-b24e-39e65efafc27" />
+
+```R
+IBD analysis (KING method of moment) on genotypes:
+Excluding 319 SNPs (monomorphic: TRUE, MAF: NaN, missing rate: NaN)
+    # of samples: 14
+    # of SNPs: 48,031
+    using 1 thread
+No family is specified, and all individuals are treated as singletons.
+Relationship inference in the presence of population stratification.
+KING IBD:    the sum of all selected genotypes (0,1,2) = 1034229
+```
+
+```R
+head(rel_df, 10)
+    ind1 ind2     kinship
+2      B    A 0.498100760
+82     L    F 0.008920038
+34     F    C 0.006222788
+38     J    C 0.005227273
+52     J    D 0.005096953
+137    K    J 0.005090748
+80     J    F 0.004961348
+66     J    E 0.002706775
+94     J    G 0.002628375
+138    L    J 0.002402253
+```
+
+
 ## back to the filtering 
 changes we can make this time: use a more strict MAF 0.01; use a more strict individual missingness cutoff; run with p=2 populations and separate these two samples into their own group; run the whole denovo and populations pipeline at the same time. 
