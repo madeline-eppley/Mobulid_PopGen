@@ -589,3 +589,82 @@ BYC_RMT_59	BYC
 BYCI_RMT_69	BYC
 BYCI_RMT_71	BYC
 ```
+
+## full pipeline!
+
+```bash
+(base) [eppley.m@explorer-02 tarapacana]$ cat one_removed_tarapacana_pipeline.sh 
+#!/bin/bash
+
+#SBATCH --partition=lotterhos
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=32
+#SBATCH --mem=128G
+#SBATCH --time=48:00:00
+#SBATCH --job-name=stacks_tarapacana
+#SBATCH --output=elim1_stacks_tarapacana_%j.log
+#SBATCH --error=elim1_stacks_tarapacana_%j.err
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=eppley.m@northeastern.edu
+
+
+export PATH=/projects/gatins/programs_explorer/stacks_2.68/bin:$PATH
+
+
+echo "Sample list:"
+cat /projects/gatins/2025_Mobulid/tarapacana/elim/rmv_1/pop_map_rmv1_tarapacana
+
+echo "Starting denovo_map.pl"
+
+denovo_map.pl \
+  -m 3 \
+  -M 3 \
+  -n 2 \
+  -T 32 \
+  -o /projects/gatins/2025_Mobulid/tarapacana/elim/rmv_1 \
+  --popmap /projects/gatins/2025_Mobulid/tarapacana/elim/rmv_1/pop_map_rmv1_tarapacana \
+  --samples /projects/gatins/2025_Mobulid_UCSC/RAD_all_combined_bycatch/trimmed90 \
+  -X "populations:-r 0.8 -p 1 --min-maf 0.01 --write-single-snp --vcf --genepop --structure --fstats --hwe -t 30"
+
+
+ls -l /projects/gatins/2025_Mobulid/tarapacana/elim/rmv_1
+
+echo "populations module done"
+
+echo "starting vcftools"
+module load vcftools # this is just globally available on explorer, slay
+
+# input VCF from stacks population run
+INPUT_VCF="/projects/gatins/2025_Mobulid/tarapacana/elim/rmv_1/populations.snps.vcf"
+
+OUTDIR="/projects/gatins/2025_Mobulid/tarapacana/elim/rmv_1"
+mkdir -p ${OUTDIR}
+
+# filter by minimum depth per genotype (minDP = 10)
+vcftools --vcf ${INPUT_VCF} \
+         --minDP 10 \
+         --recode --recode-INFO-all \
+         --out ${OUTDIR}/minDP10_elim1
+
+# filter for sites present in >= 80% of individuals
+vcftools --vcf ${OUTDIR}/minDP10_elim1.recode.vcf \
+         --max-missing 0.8 \
+         --recode --recode-INFO-all \
+         --out ${OUTDIR}/minDP10_maxmiss0.8_elim1
+
+# remove individuals with >40% missing data
+# 1: compute missingness per individual
+vcftools --vcf ${OUTDIR}/minDP10_maxmiss0.8_elim1.recode.vcf \
+         --missing-indv \
+         --out ${OUTDIR}/missingness_elim1
+
+# 2: generate a list of individuals to remove
+awk '$5 > 0.4 {print $1}' ${OUTDIR}/missingness_elim1.imiss > ${OUTDIR}/remove_individuals_elim1.txt
+
+# now filter out individuals
+vcftools --vcf ${OUTDIR}/minDP10_maxmiss0.8_elim1.recode.vcf \
+         --remove ${OUTDIR}/remove_individuals_elim1.txt \
+         --recode --recode-INFO-all \
+         --out ${OUTDIR}/minDP10_maxmiss0.8_filtInd_elim1
+```
