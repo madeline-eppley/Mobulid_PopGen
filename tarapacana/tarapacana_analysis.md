@@ -570,7 +570,10 @@ changes we can make this time: use a more strict MAF 0.01; run the whole denovo 
 
 ### remove 1 sample
 started a new directory called /elim/rmv_1 and removed sample 56, which had higher missingness than sample 57 (~4% vs 0.7%) 
-`cp /projects/gatins/2025_Mobulid_UCSC/RAD_all_combined_bycatch/pop_map_tarapacana \`
+
+`cp /projects/gatins/2025_Mobulid_UCSC/RAD_all_combined_bycatch/pop_map_tarapacana \
+   /projects/gatins/2025_Mobulid/tarapacana/elim/rmv_1/`
+
 
 ```bash
 (base) [eppley.m@explorer-02 rmv_1]$ cat pop_map_rmv1_tarapacana 
