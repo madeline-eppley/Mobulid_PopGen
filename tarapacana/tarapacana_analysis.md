@@ -550,6 +550,19 @@ head(rel_df, 10)
 138    L    J 0.002402253
 ```
 
+### snmf ancestry coefficients
+with both samples in, testing K between 1:5, our lowest cross-entropy value is K=2
+
+```R
+$crossEntropy
+         K = 1     K = 2    K = 3    K = 4    K = 5
+min  0.8863364 0.8454335 1.056315 1.248850 1.401853
+mean 0.8906090 0.8528392 1.075903 1.271387 1.430143
+max  0.8975796 0.8630781 1.099681 1.294355 1.464540
+```
+
+<img width="1938" height="1416" alt="image" src="https://github.com/user-attachments/assets/b4b31bf3-fa82-4047-b358-4756cd164664" />
+
 
 ## back to the filtering 
 changes we can make this time: use a more strict MAF 0.01; use a more strict individual missingness cutoff; run with p=2 populations and separate these two samples into their own group; run the whole denovo and populations pipeline at the same time. 
