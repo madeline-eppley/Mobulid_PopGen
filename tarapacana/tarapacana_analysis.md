@@ -749,3 +749,36 @@ vcftools --vcf ${OUTDIR}/minDP10_maxmiss0.8_elim2.recode.vcf \
          --recode --recode-INFO-all \
          --out ${OUTDIR}/minDP10_maxmiss0.8_filtInd_elim2
 ```
+
+## eliminate 1 of the highly related samples results
+
+The total number of samples: 13 
+The total number of SNPs: 43369 
+244 SNPs - monomorphic: TRUE
+
+PCA - nice, not seeing a relatedness effect here 
+
+<img width="1569" height="1416" alt="image" src="https://github.com/user-attachments/assets/62d71622-05bf-40e6-8491-592bf60a7de9" />
+
+missingness - nice results here, really complete data
+
+```R
+> summary(ind_missing_elim1)
+    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+0.003159 0.004289 0.008186 0.034521 0.018884 0.299361 
+> summary(snp_missing_elim1)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+0.00000 0.00000 0.00000 0.03452 0.07692 0.15385 
+> 
+> sort(ind_missing_elim1, decreasing = TRUE)[1:13]
+ BYC_RMT_29  BYC_RMT_06  BYC_RMM_30 BYCI_RMT_71  BYC_RMT_27  BYC_RMT_04 
+0.299361295 0.047683829 0.019668427 0.018884457 0.017132053 0.012889391 
+ BYC_RMT_28  BYC_RMB_57  BYC_RMO_45  BYC_RMT_46  BYC_RMT_07  BYC_RMT_49 
+0.008185570 0.005280269 0.004703821 0.004288778 0.004035140 0.003504808 
+BYCI_RMT_69 
+0.003158938
+```
+
+relatedness slay
+
+<img width="1569" height="1416" alt="image" src="https://github.com/user-attachments/assets/d60c190b-85f4-4354-a15e-0c2064477cf2" />
