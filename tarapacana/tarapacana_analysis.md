@@ -425,6 +425,9 @@ vcftools --vcf ${OUTDIR}/minDP10_maxmiss0.8.recode.vcf \
          --out ${OUTDIR}/minDP10_maxmiss0.8_filtInd
 ```
 
+### getting vcfs into R locally
+transfer files with scp and the following path:
+`scp eppley.m@login.explorer.northeastern.edu:/projects/gatins/2025_Mobulid/tarapacana/vcftools_filtered/n2_p1/minDP10_maxmiss0.8_filtInd.recode.vcf ~/Users/madelineeppley/Desktop/manta`
 
 ## pop structure time!!!
 
