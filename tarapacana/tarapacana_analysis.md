@@ -520,7 +520,7 @@ I will note that these two samples were identified as species RMB (birostris) by
 <img width="468" height="508" alt="image" src="https://github.com/user-attachments/assets/6e8cf2b2-876d-451f-8e95-7dbea792f300" />
 
 ### relatedness 🙂‍↕️
-this would explain it all! 0.5 = an exact clone or identical twins. Here we have a value of 0.498 between RMB_56 and RMB_57. I think it's highly likely this was the same individual sampled twice. Manta rays usually have just 1 offspring at a time, and the chances of monozygotic twins are super low.
+we have a high level of relatedness! 0.5 = an exact clone or identical twins. Here we have a value of 0.498 between RMB_56 and RMB_57. I think it's highly likely this was the same individual sampled twice. Manta rays usually have just 1 offspring at a time, and the chances of monozygotic twins are super low. HOWEVER the one super weird thing here is that the sampling sheet says 56 is a Female and 57 is a Male. 
 
 <img width="2013" height="1596" alt="image" src="https://github.com/user-attachments/assets/20e7cccd-55a7-4187-b24e-39e65efafc27" />
 
