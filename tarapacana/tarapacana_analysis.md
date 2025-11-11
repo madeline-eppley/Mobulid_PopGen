@@ -782,3 +782,146 @@ BYCI_RMT_69
 relatedness slay
 
 <img width="1569" height="1416" alt="image" src="https://github.com/user-attachments/assets/d60c190b-85f4-4354-a15e-0c2064477cf2" />
+
+
+## K=1 for tarapacana structure
+no strong signal of structure here. Lowest cross-entropy is K=1
+```R
+$crossEntropy
+         K = 1    K = 2    K = 3    K = 4    K = 5
+min  0.9240146 1.166563 1.372162 1.582380 1.659507
+mean 0.9386951 1.195024 1.397591 1.621486 1.769861
+max  0.9657460 1.230394 1.436498 1.674943 1.821412
+```
+
+<img width="1569" height="1416" alt="image" src="https://github.com/user-attachments/assets/7a253cdc-4bac-455a-88a6-ffecdd5a3ea0" />
+
+
+here's all of my R code to get those results above: 
+```R
+library(vcfR)
+library(adegenet)
+library(SNPRelate)
+library(ggplot2)
+library(ggrepel)
+library(pheatmap)
+library(LEA)
+
+vcf_elim1 <- read.vcfR("/Users/madelineeppley/Desktop/manta/minDP10_maxmiss0.8_filtInd_elim1.recode.vcf")
+
+# convert to genlight
+gl_elim1 <- vcfR2genlight(vcf_elim1)
+
+pca_elim1 <- glPca(gl_elim1, nf=3)
+scatter(pca_elim1) # don't like these labels
+
+pca_df_elim1 <- data.frame(
+  PC1 = pca_elim1$scores[,1],
+  PC2 = pca_elim1$scores[,2],
+  Sample = indNames(gl_elim1))
+
+# plot again with better labels
+ggplot(pca_df_elim1, aes(x=PC1, y=PC2)) +
+  geom_point(size=2, color="blue") +
+  geom_text_repel(aes(label=Sample),
+                  size=2.5,
+                  max.overlaps=50,
+                  segment.size=0.3) +
+  theme_minimal() +
+  labs(title="tarapacana elim 1",
+       x=paste0("PC1 (", round(pca_elim1$eig[1]/sum(pca_elim1$eig)*100,1), "%)"),
+       y=paste0("PC2 (", round(pca_elim1$eig[2]/sum(pca_elim1$eig)*100,1), "%)"))
+
+
+
+# check missingness per ind
+gt_elim1 <- extract.gt(vcf_elim1, element = "GT")
+ind_missing_elim1 <- apply(gt_elim1, 2, function(x) mean(is.na(x) | x == "./."))
+snp_missing_elim1 <- apply(gt_elim1, 1, function(x) mean(is.na(x) | x == "./."))
+summary(ind_missing_elim1)
+summary(snp_missing_elim1)
+
+sort(ind_missing_elim1, decreasing = TRUE)[1:13]
+
+ggplot(data.frame(missing = ind_missing_elim1), aes(x = missing)) +
+  geom_histogram(binwidth = 0.05, fill = "steelblue", color = "black") +
+  theme_minimal() +
+  labs(
+    title = "Individual Missingness",
+    x = "Proportion of missing genotypes",
+    y = "Number of individuals")
+
+ggplot(data.frame(missing = snp_missing_elim1), aes(x = missing)) +
+  geom_histogram(binwidth = 0.05, fill = "darkorange", color = "black") +
+  theme_minimal() +
+  labs(
+    title = "SNP Missingness",
+    x = "Proportion of missing genotypes",
+    y = "Number of SNPs")
+
+# relatedness 
+vcf.fn_elim1 <- "/Users/madelineeppley/Desktop/manta/minDP10_maxmiss0.8_filtInd_elim1.recode.vcf"
+gds.fn_elim1 <- "/Users/madelineeppley/Desktop/manta/elim1.gds"
+
+snpgdsVCF2GDS(vcf.fn_elim1, gds.fn_elim1, method="biallelic.only")  # keep only biallelic SNPs
+snpgdsSummary(gds.fn_elim1)
+
+genofile_elim1 <- snpgdsOpen(gds.fn_elim1)
+rel_elim1 <- snpgdsIBDKING(genofile_elim1, autosome.only=FALSE)
+rel_elim1$kinship[1:5, 1:5]
+
+pheatmap(rel_elim1$kinship,
+         clustering_distance_rows = "euclidean",
+         clustering_distance_cols = "euclidean",
+         main = "Pairwise Relatedness (KING kinship coefficients) - elim1")
+
+kin_mat_elim1 <- rel_elim1$kinship
+sample_names_elim1 <- rel_elim1$sample.id
+
+rel_df_elim1 <- as.data.frame(as.table(kin_mat_elim1))
+colnames(rel_df_elim1) <- c("ind1", "ind2", "kinship")
+
+# remove self comparisions
+rel_df_elim1 <- rel_df_elim1[rel_df_elim1$ind1 != rel_df_elim1$ind2, ]
+rel_df_elim1 <- rel_df_elim1[!duplicated(t(apply(rel_df_elim1[,1:2], 1, sort))), ]
+
+# sort by kinship
+rel_df_elim1 <- rel_df_elim1[order(-rel_df_elim1$kinship), ]
+
+# top related pairs
+head(rel_df_elim1, 10) # highest value is 0.01, great
+
+pheatmap(
+  kin_mat_elim1,
+  labels_row = sample_names_elim1,
+  labels_col = sample_names_elim1,
+  clustering_distance_rows = "euclidean",
+  clustering_distance_cols = "euclidean",
+  main = "Pairwise Relatedness (KING kinship coefficients) elim1")
+
+## looks great here - now no relatedness between samples 
+
+# snmf - to LEA format
+vcf2geno("/Users/madelineeppley/Desktop/manta/minDP10_maxmiss0.8_filtInd_elim1.recode.vcf", "/Users/madelineeppley/Desktop/manta/elim1_tarapacana.geno")
+
+# run
+project <- snmf("/Users/madelineeppley/Desktop/manta/elim1_tarapacana.geno", K = 1:5, entropy = TRUE, repetitions = 10, project = "new")
+
+# find the best K value and best run
+print(summary(project)) # our highest support is K=1
+plot(project, col = "blue", pch = 19, cex = 1.2) # highest support K=1
+
+# just check K=2 to see
+best_k <- 2
+k2_runs <- which(project@K == 2)
+best_run <- which.min(cross.entropy(project, K = best_k))
+qmatrix <- Q(project, K = best_k, run = best_run)
+
+sample_names <- colnames(vcf_elim1@gt)[-1] # need to remove first col here
+sample_names
+
+# nope looks kind of artificial to me
+barplot(t(qmatrix), col = rainbow(best_k), border = NA, 
+        names.arg = sample_names, las = 2, cex.names = 0.8,
+        main = paste("SNMF testing K=2 tarapacana", best_k))
+```
