@@ -564,5 +564,28 @@ max  0.8975796 0.8630781 1.099681 1.294355 1.464540
 <img width="1938" height="1416" alt="image" src="https://github.com/user-attachments/assets/b4b31bf3-fa82-4047-b358-4756cd164664" />
 
 
-## back to the filtering 
-changes we can make this time: use a more strict MAF 0.01; use a more strict individual missingness cutoff; run with p=2 populations and separate these two samples into their own group; run the whole denovo and populations pipeline at the same time. 
+## back to the filtering & doing some sample elimination
+changes we can make this time: use a more strict MAF 0.01; run the whole denovo and populations pipeline at the same time; remove 1 sample between 56 and 57; remove BOTH samples 56 and 57. 
+
+
+### remove 1 sample
+started a new directory called /elim/rmv_1 and removed sample 56, which had higher missingness than sample 57 (~4% vs 0.7%) 
+`cp /projects/gatins/2025_Mobulid_UCSC/RAD_all_combined_bycatch/pop_map_tarapacana \`
+
+```bash
+(base) [eppley.m@explorer-02 rmv_1]$ cat pop_map_rmv1_tarapacana 
+BYC_RMB_57	BYC
+BYC_RMM_30	BYC
+BYC_RMO_45	BYC
+BYC_RMT_04	BYC
+BYC_RMT_06	BYC
+BYC_RMT_07	BYC
+BYC_RMT_27	BYC
+BYC_RMT_28	BYC
+BYC_RMT_29	BYC
+BYC_RMT_46	BYC
+BYC_RMT_49	BYC
+BYC_RMT_59	BYC
+BYCI_RMT_69	BYC
+BYCI_RMT_71	BYC
+```
