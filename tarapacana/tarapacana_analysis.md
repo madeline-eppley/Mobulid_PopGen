@@ -437,6 +437,7 @@ library(vcfR)
 library(adegenet)
 
 vcf <- read.vcfR("/Users/madelineeppley/Desktop/manta/minDP10_maxmiss0.8_filtInd.recode.vcf")
+# we have 48,350 SNPs remaining
 
 # convert to genlight
 gl <- vcfR2genlight(vcf)
@@ -462,7 +463,8 @@ ggplot(pca_df, aes(x=PC1, y=PC2)) +
        y=paste0("PC2 (", round(pca$eig[2]/sum(pca$eig)*100,1), "%)"))
 ```
 
-<img width="1671" height="1224" alt="image" src="https://github.com/user-attachments/assets/99421edb-f82a-4a7d-866a-f9be16dc194e" />
+<img width="1671" height="1224" alt="image" src="https://github.com/user-attachments/assets/1e180173-5c98-4614-84a0-4b42f79a7cd0" />
+
 
 weird happenings with BYC_RMB_56 and BYC_RMB_57!
 
