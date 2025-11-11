@@ -430,6 +430,58 @@ transfer files with scp and the following path:
 `scp eppley.m@login.explorer.northeastern.edu:/projects/gatins/2025_Mobulid/tarapacana/vcftools_filtered/n2_p1/minDP10_maxmiss0.8_filtInd.recode.vcf ~/Users/madelineeppley/Desktop/manta`
 
 ## pop structure time!!!
+let's start with a PCA
+
+```R
+library(vcfR)
+library(adegenet)
+
+vcf <- read.vcfR("/Users/madelineeppley/Desktop/manta/minDP10_maxmiss0.8_filtInd.recode.vcf")
+
+# convert to genlight
+gl <- vcfR2genlight(vcf)
+
+pca <- glPca(gl, nf=3)
+#scatter(pca) # don't like these labels
+
+pca_df <- data.frame(
+  PC1 = pca$scores[,1],
+  PC2 = pca$scores[,2],
+  Sample = indNames(gl))
+
+# plot again with better labels
+ggplot(pca_df, aes(x=PC1, y=PC2)) +
+  geom_point(size=2, color="blue") +
+  geom_text_repel(aes(label=Sample),
+                  size=2.5,
+                  max.overlaps=50,
+                  segment.size=0.3) +
+  theme_minimal() +
+  labs(title="tarapacana n2_p1",
+       x=paste0("PC1 (", round(pca$eig[1]/sum(pca$eig)*100,1), "%)"),
+       y=paste0("PC2 (", round(pca$eig[2]/sum(pca$eig)*100,1), "%)"))
+```
+
+<img width="1671" height="1224" alt="image" src="https://github.com/user-attachments/assets/99421edb-f82a-4a7d-866a-f9be16dc194e" />
+
+weird happenings with BYC_RMB_56 and BYC_RMB_57!
+
+let's go back to what we know about them. they were collected very close together off the coast of ecuador, but in a similar area to some other samples. they were also collected just one day apart ... however one is male and one is female, so we shouldn't have a sex-related effect
+
+<img width="1436" height="659" alt="Screenshot 2025-11-11 at 8 13 09 AM" src="https://github.com/user-attachments/assets/48e7fb18-4455-4dcd-91f3-ef99f5e740d5" />
+
+collection date, species, sex, lat, long, sample: 
+
+7/14/21	RMB	H	0143N	08234W	BYC_RMB_56
+
+7/15/21	RMB	M	0126N	08226W	BYC_RMB_57
 
 
+possible options: 
+- we have relatedness between these two samples (BYC_RMB_56 and BYC_RMB_57) such as offspring/parent, sibling pair
+- these are a different species? i.e. cryptic speciation
+- these samples have an artifical effect like high missingness 
+- we have bad SNP filtering and should go back to the drawing board.
 
+## back to the filtering 
+changes we can make this time: use a more strict MAF 0.01; use a more strict individual missingness cutoff; run with p=2 populations and separate these two samples into their own group; run the whole denovo and populations pipeline at the same time. 
