@@ -925,3 +925,6 @@ barplot(t(qmatrix), col = rainbow(best_k), border = NA,
         names.arg = sample_names, las = 2, cex.names = 0.8,
         main = paste("SNMF testing K=2 tarapacana", best_k))
 ```
+
+## testing with 2 populations
+Based on my PCA, I think there might be a little bit of differentiation between the BYC_RMT_69 sample and the rest. 
