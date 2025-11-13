@@ -202,3 +202,68 @@ vcftools --vcf ${OUTDIR}/minDP10_maxmiss0.8.recode.vcf \
          --recode --recode-INFO-all \
          --out ${OUTDIR}/minDP10_maxmiss0.8_filtInd
 ```
+
+## results
+tldr; we are keeping 22 individuals and 11.8k SNPs as the final dataset, here are the results: 
+
+#### gstacks output
+```bash
+Genotyped 178705 loci:
+  effective per-sample coverage: mean=20.3x, stdev=11.1x, min=7.4x, max=47.6x
+  mean number of sites per locus: 90.0
+  a consistent phasing was found for 50638 of out 62583 (80.9%) diploid loci needing phasing
+```
+
+Depths of Coverage for Processed Samples:
+BYC_RMB_01; loci assembled: 130803; depth: 36.83x; max: 811x; number of reads: 4782079 (85.4%)
+IN_1_MB; loci assembled: 121520; depth: 21.11x; max: 490x; number of reads: 2549088 (82.3%)
+IN_18_MB_B; loci assembled: 81343; depth: 8.64x; max: 314x; number of reads: 698981 (79.3%)
+IN_2_MB; loci assembled: 101626; depth: 12.05x; max: 314x; number of reads: 1216263 (81.0%)
+IN_4_MB; loci assembled: 108573; depth: 10.47x; max: 398x; number of reads: 1130003 (81.7%)
+IN_5_MB; loci assembled: 123697; depth: 15.48x; max: 367x; number of reads: 1903358 (83.6%)
+IN_6_MB; loci assembled: 126167; depth: 17.20x; max: 395x; number of reads: 2156576 (81.4%)
+IN_7_MB; loci assembled: 124105; depth: 18.53x; max: 479x; number of reads: 2285649 (85.0%)
+PER_001_MB; loci assembled: 131413; depth: 39.71x; max: 942x; number of reads: 5182634 (84.1%)
+PER_003_MB; loci assembled: 128513; depth: 26.96x; max: 589x; number of reads: 3443386 (85.1%)
+PER_004_MB; loci assembled: 124339; depth: 18.73x; max: 483x; number of reads: 2314053 (84.4%)
+PER_005_MB; loci assembled: 129786; depth: 38.94x; max: 839x; number of reads: 5018910 (84.5%)
+PER_006_MB; loci assembled: 129702; depth: 23.49x; max: 507x; number of reads: 3028279 (83.7%)
+PER_007_MB; loci assembled: 129146; depth: 21.03x; max: 643x; number of reads: 2698557 (84.3%)
+PER_008_MB; loci assembled: 108916; depth: 9.24x; max: 306x; number of reads: 1001335 (83.1%)
+PER_DZW81_4_MB; loci assembled: 129910; depth: 45.07x; max: 1335x; number of reads: 5814942 (84.3%)
+REV_1_MB; loci assembled: 97320; depth: 7.60x; max: 304x; number of reads: 735713 (80.7%)
+REV_10_MB; loci assembled: 112843; depth: 9.52x; max: 204x; number of reads: 1067764 (80.9%)
+REV_13_MB; loci assembled: 130746; depth: 22.90x; max: 407x; number of reads: 2975946 (82.2%)
+REV_14_MB_B; loci assembled: 123354; depth: 16.90x; max: 490x; number of reads: 2072218 (85.4%)
+REV_15_MB; loci assembled: 119381; depth: 13.36x; max: 408x; number of reads: 1585774 (83.8%)
+REV_17_MB; loci assembled: 121974; depth: 15.94x; max: 475x; number of reads: 1933145 (84.5%)
+REV_18_MB; loci assembled: 118268; depth: 10.67x; max: 307x; number of reads: 1254545 (83.3%)
+REV_19_MB; loci assembled: 129404; depth: 28.21x; max: 630x; number of reads: 3626545 (84.2%)
+REV_20_MB_B; loci assembled: 122286; depth: 13.96x; max: 374x; number of reads: 1697638 (85.8%)
+REV_5_MB; loci assembled: 96905; depth: 7.30x; max: 266x; number of reads: 704001 (79.0%)
+
+#### after filtering for minDP 10
+```
+After filtering, kept 26 out of 26 Individuals
+Outputting VCF file...
+After filtering, kept 22958 out of a possible 22958 Sites
+Run Time = 1.00 seconds
+```
+
+#### after filtering for max-missing 0.8
+```
+After filtering, kept 26 out of 26 Individuals
+Outputting VCF file...
+After filtering, kept 11843 out of a possible 22958 Sites
+Run Time = 1.00 seconds
+```
+
+#### after filtering for missingness at the individual level 
+```bash
+After filtering, kept 22 out of 26 Individuals
+Outputting VCF file...
+After filtering, kept 11843 out of a possible 11843 Sites
+```
+
+
+
