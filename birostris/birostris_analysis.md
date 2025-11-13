@@ -279,4 +279,4 @@ REV_5_MB
 ```
 
 ### transferring vcf to local R
-scp eppley.m@login.explorer.northeastern.edu:/projects/gatins/2025_Mobulid/birostris/minDP10_maxmiss0.8_filtInd.recode.vcf ~/Users/madelineeppley/Desktop/manta/birostris
+scp eppley.m@login.explorer.northeastern.edu:/projects/gatins/2025_Mobulid/birostris/minDP10_maxmiss0.8_filtInd.recode.vcf ~/Desktop/manta/birostris
