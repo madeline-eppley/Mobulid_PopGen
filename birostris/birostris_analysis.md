@@ -41,3 +41,80 @@ REV_20_MB_B	REV
 REV_5_MB	REV
 ```
 
+
+## full pipeline
+```bash
+#!/bin/bash
+
+#SBATCH --partition=lotterhos
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=32
+#SBATCH --mem=128G
+#SBATCH --time=48:00:00
+#SBATCH --job-name=stacks_birostris
+#SBATCH --output=stacks_birostris_%j.log
+#SBATCH --error=stacks_birostris_%j.err
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=eppley.m@northeastern.edu
+
+
+export PATH=/projects/gatins/programs_explorer/stacks_2.68/bin:$PATH
+
+
+echo "Sample list:"
+cat /projects/gatins/2025_Mobulid/birostris/pop_map_birostris
+
+echo "Starting denovo_map.pl"
+
+denovo_map.pl \
+  -m 3 \
+  -M 3 \
+  -n 2 \
+  -T 32 \
+  -o /projects/gatins/2025_Mobulid/birostris/ \
+  --popmap /projects/gatins/2025_Mobulid/birostris \
+  --samples /projects/gatins/2025_Mobulid_UCSC/RAD_all_combined_bycatch/trimmed90 \
+  -X "populations:-r 0.8 -p 1 --min-maf 0.05 --write-single-snp --vcf --genepop --structure --fstats --hwe -t 30"
+
+
+ls -l /projects/gatins/2025_Mobulid/birostris
+
+echo "populations module done"
+
+echo "starting vcftools"
+module load vcftools # this is just globally available on explorer, slay
+
+# input VCF from stacks population run
+INPUT_VCF="/projects/gatins/2025_Mobulid/birostris/populations.snps.vcf"
+
+OUTDIR="/projects/gatins/2025_Mobulid/birostris"
+mkdir -p ${OUTDIR}
+
+# filter by minimum depth per genotype (minDP = 10)
+vcftools --vcf ${INPUT_VCF} \
+         --minDP 10 \
+         --recode --recode-INFO-all \
+         --out ${OUTDIR}/minDP10
+
+# filter for sites present in >= 80% of individuals
+vcftools --vcf ${OUTDIR}/minDP10.recode.vcf \
+         --max-missing 0.8 \
+         --recode --recode-INFO-all \
+         --out ${OUTDIR}/minDP10_maxmiss0.8
+
+# remove individuals with >40% missing data
+# 1: compute missingness per individual
+vcftools --vcf ${OUTDIR}/minDP10_maxmiss0.8.recode.vcf \
+         --missing-indv \
+         --out ${OUTDIR}/missingness
+
+# 2: generate a list of individuals to remove
+awk '$5 > 0.4 {print $1}' ${OUTDIR}/missingness.imiss > ${OUTDIR}/remove_individuals.txt
+
+# now filter out individuals
+vcftools --vcf ${OUTDIR}/minDP10_maxmiss0.8.recode.vcf \
+         --remove ${OUTDIR}/remove_individuals.txt \
+         --recode --recode-INFO-all \
+         --out ${OUTDIR}/minDP10_maxmiss0.8_filtInd
+```
