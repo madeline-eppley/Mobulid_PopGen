@@ -267,5 +267,16 @@ Outputting VCF file...
 After filtering, kept 11843 out of a possible 11843 Sites
 ```
 
+### removed individuals
+luckily, we have an even spread of individuals across populations that didn't pass our quality filtering. these will be removed from the analysis.
+```
+(base) [eppley.m@explorer-02 birostris]$ cat remove_individuals.txt 
+INDV
+IN_18_MB_B
+PER_008_MB
+REV_1_MB
+REV_5_MB
+```
 
-
+### transferring vcf to local R
+scp eppley.m@login.explorer.northeastern.edu:/projects/gatins/2025_Mobulid/birostris/minDP10_maxmiss0.8_filtInd.recode.vcf ~/Users/madelineeppley/Desktop/manta/birostris
