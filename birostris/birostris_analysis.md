@@ -214,6 +214,7 @@ Genotyped 178705 loci:
   a consistent phasing was found for 50638 of out 62583 (80.9%) diploid loci needing phasing
 ```
 
+```
 Depths of Coverage for Processed Samples:
 BYC_RMB_01; loci assembled: 130803; depth: 36.83x; max: 811x; number of reads: 4782079 (85.4%)
 IN_1_MB; loci assembled: 121520; depth: 21.11x; max: 490x; number of reads: 2549088 (82.3%)
@@ -241,6 +242,7 @@ REV_18_MB; loci assembled: 118268; depth: 10.67x; max: 307x; number of reads: 12
 REV_19_MB; loci assembled: 129404; depth: 28.21x; max: 630x; number of reads: 3626545 (84.2%)
 REV_20_MB_B; loci assembled: 122286; depth: 13.96x; max: 374x; number of reads: 1697638 (85.8%)
 REV_5_MB; loci assembled: 96905; depth: 7.30x; max: 266x; number of reads: 704001 (79.0%)
+```
 
 #### after filtering for minDP 10
 ```
