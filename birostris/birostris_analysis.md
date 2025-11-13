@@ -1,4 +1,4 @@
-<img width="456" height="33" alt="image" src="https://github.com/user-attachments/assets/2dd54072-9597-4f4a-b868-d9b5ca915cfd" /># Birostris RADseq analysis
+# Birostris RADseq analysis
 
 In this dataset, we have 36 RAD-sequenced samples from India, Peru, Mexico, and one bycatch sample from the high seas.
 
