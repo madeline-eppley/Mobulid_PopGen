@@ -284,6 +284,8 @@ scp eppley.m@login.explorer.northeastern.edu:/projects/gatins/2025_Mobulid/biros
 
 ### PCA 
 I think I could see some regional groupings here ... need to import pops into R and plot PCA with those
+Notably our bycatch sample caught off of peru looks like it's grouping near other samples from Peru! super cool :D
+
 <img width="1413" height="1119" alt="image" src="https://github.com/user-attachments/assets/d3898412-3dd2-4310-ae90-a941ed484f85" />
 
 <img width="1413" height="1119" alt="image" src="https://github.com/user-attachments/assets/dd044ea8-0ed5-4747-972b-9ba87dbe3b74" />
@@ -291,6 +293,7 @@ I think I could see some regional groupings here ... need to import pops into R 
 <img width="1413" height="1119" alt="image" src="https://github.com/user-attachments/assets/c1d2e8e8-3ecb-49aa-9392-a8114307fc3c" />
 
 ### relatedness looks good to me
+
 <img width="1980" height="1494" alt="image" src="https://github.com/user-attachments/assets/e46aba31-30f9-42ab-bf6c-0adc2b255105" />
 
 
