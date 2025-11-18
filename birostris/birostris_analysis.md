@@ -292,7 +292,8 @@ Notably our bycatch sample caught off of peru looks like it's grouping near othe
 
 <img width="1413" height="1119" alt="image" src="https://github.com/user-attachments/assets/c1d2e8e8-3ecb-49aa-9392-a8114307fc3c" />
 
-### relatedness looks good to me
+### relatedness
+it kind of looks like REV_10 is more closely related to everything else ....??
 
 <img width="1980" height="1494" alt="image" src="https://github.com/user-attachments/assets/e46aba31-30f9-42ab-bf6c-0adc2b255105" />
 
