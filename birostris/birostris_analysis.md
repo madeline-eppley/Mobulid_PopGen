@@ -280,3 +280,21 @@ REV_5_MB
 
 ### transferring vcf to local R
 scp eppley.m@login.explorer.northeastern.edu:/projects/gatins/2025_Mobulid/birostris/minDP10_maxmiss0.8_filtInd.recode.vcf ~/Desktop/manta/birostris
+
+
+### PCA 
+I think I could see some regional groupings here ... need to import pops into R and plot PCA with those
+<img width="1413" height="1119" alt="image" src="https://github.com/user-attachments/assets/d3898412-3dd2-4310-ae90-a941ed484f85" />
+
+<img width="1413" height="1119" alt="image" src="https://github.com/user-attachments/assets/dd044ea8-0ed5-4747-972b-9ba87dbe3b74" />
+
+<img width="1413" height="1119" alt="image" src="https://github.com/user-attachments/assets/c1d2e8e8-3ecb-49aa-9392-a8114307fc3c" />
+
+### relatedness looks good to me
+<img width="1980" height="1494" alt="image" src="https://github.com/user-attachments/assets/e46aba31-30f9-42ab-bf6c-0adc2b255105" />
+
+
+### manhattan
+179 outliers
+<img width="1980" height="1494" alt="image" src="https://github.com/user-attachments/assets/a86e553e-e4d1-4741-b035-ada8ae5c9307" />
+
