@@ -5,7 +5,7 @@
 - filter for LD in PLINK using -indep with a sliding window fo 50 SNPs (also could test 100?)
 - filtered vcfs -> genlight objects, produce STRUCTURE inputs
 - PCA, ancestry K 1-5 show all plots, cross-entropy plots
-- 
+- Fst heatmaps between sampling sites
 
 ## filtering with vcftools 
 From the [Humble 2023 supplementary file](https://onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1111%2Fmec.17220&file=mec17220-sup-0001-AppendixS1.pdf): VCFtools v1.13 in order to remove
@@ -20,6 +20,15 @@ From the [Humble 2023 supplementary file](https://onlinelibrary.wiley.com/action
 disequilibrium using the -indep function in PLINK v1.9 with a sliding window of 50 SNPs, a
 step size of 5 SNPs and variance inflation threshold of 2. These datasets were used for analysis of population structure and contemporary
 migration."
+
+example of the plink code 
+```
+plink --bfile alfredi_geno4_dp6_ind_geno_depth_no_dups_maf --indep 50 5 2 \
+--nonfounders --out alfredi_geno4_dp6_ind_geno_depth_no_dups_maf --allow-extra-chr --debug
+
+plink --bfile birostris_geno4_dp6_ind_geno_depth_no_dups_maf --indep 50 5 2 \
+--nonfounders --out birostris_geno4_dp6_ind_geno_depth_no_dups_maf --allow-extra-chr --debug
+```
 
 ## optimizing loci output from stacks 
 figure shows the change in the number of polymorhpic loci present in at least 80% of the samples for increasing values of M and n assembly parameters in stacks. 
