@@ -206,6 +206,10 @@ n2 = 81560 loci
 n3 = 81363 loci
 n4 = 81047 loci
 n5 = 80505 loci
+n6 = 79923 loci
+n7 = 79356 loci 
+
+so a decreasing trend in the number of assembled loci - n 2 is optimal but we have minimal trade off as we increase n. 
 
 
 ## testing values of p (p = pops)
