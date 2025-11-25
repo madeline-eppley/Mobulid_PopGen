@@ -282,6 +282,7 @@ REV_5_MB
 scp eppley.m@login.explorer.northeastern.edu:/projects/gatins/2025_Mobulid/birostris/minDP10_maxmiss0.8_filtInd.recode.vcf ~/Desktop/manta/birostris
 
 
+### Initial data exploration in R 
 ### PCA 
 I think I could see some regional groupings here ... need to import pops into R and plot PCA with those
 Notably our bycatch sample caught off of peru looks like it's grouping near other samples from Peru! super cool :D
@@ -301,4 +302,21 @@ it kind of looks like REV_10 is more closely related to everything else ....??
 ### manhattan
 179 outliers
 <img width="1980" height="1494" alt="image" src="https://github.com/user-attachments/assets/a86e553e-e4d1-4741-b035-ada8ae5c9307" />
+
+
+
+## improving visualizations in R
+i think that our workflow looks reasonably good at this point and we can proceed with our final visulization goals for birostris!
+
+step 1:  get the pop map file into R
+`scp eppley.m@login.explorer.northeastern.edu:/projects/gatins/2025_Mobulid/birostris/pop_map_birostris ~/Desktop/manta/birostris`
+
+here's our workflow:
+1. filtered vcfs -> genlight objects
+2. PCA
+3. LEA ancestry analysis, and ancestry K 1-5 show all plots plus the cross-entropy plot
+4. Fst heatmaps between sampling sites
+
+
+
 
