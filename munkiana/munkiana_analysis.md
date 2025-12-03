@@ -180,6 +180,10 @@ NIC_2731_01
 NIC_2731_02
 ```
 
+since I always forget where to find this info ... 
+```bash
+cat tsv2bam.log
+```
 
 depths of coverage for this species are on average lower than some of the other species, but still should be fine: 
 ```
@@ -214,6 +218,72 @@ PER_DPPW025_MM; loci assembled: 101625; depth: 8.14x; max: 318x; number of reads
 PER_DPPW033_MM; loci assembled: 106851; depth: 9.04x; max: 249x; number of reads: 961526 (83.4%)
 PER_DPPW28_MM; loci assembled: 110690; depth: 10.26x; max: 293x; number of reads: 1130484 (85.0%)
 PER_DPPW98_MM; loci assembled: 125316; depth: 12.97x; max: 431x; number of reads: 1613917 (79.4%)
+```
+
+and the total number of loci assembled is VERY low, yikes!. we have 689 loci left after our filtering. it looks like we got absolutly killed by the max-missingness 0.8 filtering step, which makes sense to me since it look slike the coverage and number of read % was a little lower for this species than the others. maybe we can adjust this parameter?
+
+>[!NOTE]
+> let's talk about the max missingness filter step with melissa and remy. for now, I'm going to go ahead and make some visualizations with the data anyway. before that missingness filter step, we have ~6.5k loci in the dataset.
+
+```
+VCFtools - 0.1.16
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--vcf /projects/gatins/2025_Mobulid/munkiana/populations.snps.vcf
+	--recode-INFO-all
+	--minDP 10
+	--out /projects/gatins/2025_Mobulid/munkiana/minDP10
+	--recode
+
+After filtering, kept 30 out of 30 Individuals
+Outputting VCF file...
+After filtering, kept 6599 out of a possible 6599 Sites
+Run Time = 0.00 seconds
+
+VCFtools - 0.1.16
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--vcf /projects/gatins/2025_Mobulid/munkiana/minDP10.recode.vcf
+	--recode-INFO-all
+	--max-missing 0.8
+	--out /projects/gatins/2025_Mobulid/munkiana/minDP10_maxmiss0.8
+	--recode
+
+After filtering, kept 30 out of 30 Individuals
+Outputting VCF file...
+After filtering, kept 689 out of a possible 6599 Sites
+Run Time = 0.00 seconds
+
+VCFtools - 0.1.16
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--vcf /projects/gatins/2025_Mobulid/munkiana/minDP10_maxmiss0.8.recode.vcf
+	--missing-indv
+	--out /projects/gatins/2025_Mobulid/munkiana/missingness
+
+After filtering, kept 30 out of 30 Individuals
+Outputting Individual Missingness
+After filtering, kept 689 out of a possible 689 Sites
+Run Time = 0.00 seconds
+
+VCFtools - 0.1.16
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--vcf /projects/gatins/2025_Mobulid/munkiana/minDP10_maxmiss0.8.recode.vcf
+	--remove /projects/gatins/2025_Mobulid/munkiana/remove_individuals.txt
+	--recode-INFO-all
+	--out /projects/gatins/2025_Mobulid/munkiana/minDP10_maxmiss0.8_filtInd
+	--recode
+
+Excluding individuals in 'exclude' list
+After filtering, kept 27 out of 30 Individuals
+Outputting VCF file...
+After filtering, kept 689 out of a possible 689 Sites
+Run Time = 0.00 seconds
 ```
 
 
