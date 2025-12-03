@@ -507,3 +507,10 @@ Run Time = 0.00 seconds
 ```
 
 we lost a few loci here (down from 11843) but overall our results are looking really consistent. let's move on to the genetics analysis in R and make some plots! 
+
+### transferring vcf to local R
+I'm going to make a new folder on my desktop called birostris_byc_own_pop and store results there. if we end up going with this population map, I'll rename the folder to replace the current `/Users/madelineeppley/Desktop/manta/birostris` folder. 
+
+``` bash
+scp eppley.m@login.explorer.northeastern.edu:/projects/gatins/2025_Mobulid/birostris/byc_own_pop/minDP10_maxmiss0.8_filtInd.recode.vcf ~/Desktop/manta/birostris_byc_own_pop
+```
