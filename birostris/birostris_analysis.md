@@ -319,4 +319,6 @@ here's our workflow:
 
 
 
+# running the byc sample as it's own population
+Remy and I met and she had the idea to run the bycatch sample as it's own population to compare the results when we group it with the Peru pop (as done above). 
 
