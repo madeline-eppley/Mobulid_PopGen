@@ -157,7 +157,7 @@ denovo_map.pl \
   -n 2 \
   -T 32 \
   -o /projects/gatins/2025_Mobulid/birostris \
-  --popmap /projects/gatins/2025_Mobulid/birostris \
+  --popmap /projects/gatins/2025_Mobulid/birostris/pop_map_birostris \
   --samples /projects/gatins/2025_Mobulid_UCSC/RAD_all_combined_bycatch/trimmed90 \
   -X "populations:-r 0.8 -p 3 --min-maf 0.05 --write-single-snp --vcf --genepop --structure --fstats --hwe -t 30"
 
