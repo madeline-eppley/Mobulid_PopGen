@@ -447,7 +447,8 @@ Genotyped 178765 loci:
 
 our prior run genotyped 178705 loci, so this is an improvement. the prior run also had a mean coverage of mean=20.3x. 
 
-vcftools filtering
+vcftools filtering (for the record i get this from the .sh.err file that gets output from stacks: so here, that command was `cat stacks_birostris_byc_own_pop_3034189.err' where the number code is the sbatch job #)
+
 ```
 Parameters as interpreted:
 	--vcf /projects/gatins/2025_Mobulid/birostris/byc_own_pop/populations.snps.vcf
