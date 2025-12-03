@@ -435,3 +435,75 @@ vcftools --vcf ${OUTDIR}/minDP10_maxmiss0.8.recode.vcf \
          --out ${OUTDIR}/minDP10_maxmiss0.8_filtInd
 ```
 
+### ok now to compare some outputs! 
+
+gstacks
+```
+Genotyped 178765 loci:
+  effective per-sample coverage: mean=20.4x, stdev=11.1x, min=7.4x, max=47.6x
+  mean number of sites per locus: 90.0
+  a consistent phasing was found for 50503 of out 62535 (80.8%) diploid loci needing phasing
+```
+
+our prior run genotyped 178705 loci, so this is an improvement. the prior run also had a mean coverage of mean=20.3x. 
+
+vcftools filtering
+```
+Parameters as interpreted:
+	--vcf /projects/gatins/2025_Mobulid/birostris/byc_own_pop/populations.snps.vcf
+	--recode-INFO-all
+	--minDP 10
+	--out /projects/gatins/2025_Mobulid/birostris/byc_own_pop/minDP10
+	--recode
+
+After filtering, kept 26 out of 26 Individuals
+Outputting VCF file...
+After filtering, kept 29075 out of a possible 29075 Sites
+Run Time = 1.00 seconds
+
+VCFtools - 0.1.16
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--vcf /projects/gatins/2025_Mobulid/birostris/byc_own_pop/minDP10.recode.vcf
+	--recode-INFO-all
+	--max-missing 0.8
+	--out /projects/gatins/2025_Mobulid/birostris/byc_own_pop/minDP10_maxmiss0.8
+	--recode
+
+After filtering, kept 26 out of 26 Individuals
+Outputting VCF file...
+After filtering, kept 11826 out of a possible 29075 Sites
+Run Time = 1.00 seconds
+
+VCFtools - 0.1.16
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--vcf /projects/gatins/2025_Mobulid/birostris/byc_own_pop/minDP10_maxmiss0.8.recode.vcf
+	--missing-indv
+	--out /projects/gatins/2025_Mobulid/birostris/byc_own_pop/missingness
+
+After filtering, kept 26 out of 26 Individuals
+Outputting Individual Missingness
+After filtering, kept 11826 out of a possible 11826 Sites
+Run Time = 0.00 seconds
+
+VCFtools - 0.1.16
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--vcf /projects/gatins/2025_Mobulid/birostris/byc_own_pop/minDP10_maxmiss0.8.recode.vcf
+	--remove /projects/gatins/2025_Mobulid/birostris/byc_own_pop/remove_individuals.txt
+	--recode-INFO-all
+	--out /projects/gatins/2025_Mobulid/birostris/byc_own_pop/minDP10_maxmiss0.8_filtInd
+	--recode
+
+Excluding individuals in 'exclude' list
+After filtering, kept 22 out of 26 Individuals
+Outputting VCF file...
+After filtering, kept 11826 out of a possible 11826 Sites
+Run Time = 0.00 seconds
+```
+
+we lost a few loci here (down from 11843) but overall our results are looking really consistent. let's move on to the genetics analysis in R and make some plots! 
