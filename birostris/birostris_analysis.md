@@ -540,6 +540,10 @@ There are some very weak differences, and it does appear that our bycatch sample
 <img width="798" height="684" alt="image" src="https://github.com/user-attachments/assets/573e4e36-0c3d-492c-a3ad-a7f6bdbfae37" />
 
 
+# Fst with the BYC as a separate pop 
+actually shows more difference between IND and BYC sample - Fst increases from a max of 0.006 to 0.013
+<img width="1593" height="1365" alt="image" src="https://github.com/user-attachments/assets/d4f3188a-300a-4342-af1a-0c25459ca783" />
+
 
 
 
