@@ -515,3 +515,24 @@ I'm going to make a new folder on my desktop called birostris_byc_own_pop and st
 ``` bash
 scp eppley.m@login.explorer.northeastern.edu:/projects/gatins/2025_Mobulid/birostris/byc_own_pop/minDP10_maxmiss0.8_filtInd.recode.vcf ~/Desktop/manta/birostris_byc_own_pop
 ```
+
+### looking at some outputs
+just taking a quick glance i'm not seeing any major differences between the first PCA and the PCA using results from grouping the bycatch sample with Peru. I'm going to retain these results just in case a reviewer asks for justificiation about why we grouped with Peru, but we should be able to stick with those same results from the initial run. 
+
+### editing the DAPC
+ok I went ahead and read through [Thia 2022](https://onlinelibrary.wiley.com/doi/epdf/10.1111/1755-0998.13706) to try to better understand DAPC analysis. DAPC is a hypothesis-driven test of a priori population groupings. The risk of DAPC is that overfitting can easily occur when too many explanatory PCs are retained, particularly in panmictic groups. 
+
+Here, let's say we are going to test a priori sampling locations as "populations" of m. birostris. 
+- there were 3 true sampling locations (PERU, MEX, IND) and one bycatch location.
+- accordingly, if we are going to include bycatch as it's own sampling location, the number of PCs retained to test this hypothesis for structure would be `n.pc = 4` and `n.da = 1 - n.pc`, which is 3. we would test this on the genetic dataset where we ran STACKS with the bycatch sample as it's own group.
+- we could also test `n.pc = 3` and `n.da = 2` with the dataset where the bycatch sample was run through the STACKS program within the PERU group. this would account for 3 PCs retained for each of the three true sampling locations.
+
+Here are the results: 
+
+<img width="798" height="684" alt="image" src="https://github.com/user-attachments/assets/573e4e36-0c3d-492c-a3ad-a7f6bdbfae37" />
+
+
+
+
+
+
