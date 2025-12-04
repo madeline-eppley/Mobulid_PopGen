@@ -520,7 +520,14 @@ scp eppley.m@login.explorer.northeastern.edu:/projects/gatins/2025_Mobulid/biros
 just taking a quick glance i'm not seeing any major differences between the first PCA and the PCA using results from grouping the bycatch sample with Peru. I'm going to retain these results just in case a reviewer asks for justificiation about why we grouped with Peru, but we should be able to stick with those same results from the initial run. 
 
 ### editing the DAPC
-ok I went ahead and read through [Thia 2022](https://onlinelibrary.wiley.com/doi/epdf/10.1111/1755-0998.13706) to try to better understand DAPC analysis. DAPC is a hypothesis-driven test of a priori population groupings. The risk of DAPC is that overfitting can easily occur when too many explanatory PCs are retained, particularly in panmictic groups. 
+Here is the reviewer comment that I need to address: "Line 320 but relevant to other parts of the results as well: I would encourage the authors to be careful in implementation and interpretation of DAPC. There can be the appearance of structure, particularly in the cases in which populations are separated by very low FST separating populations. See recent (and semi-recent) published literature on the subject: 
+https://onlinelibrary.wiley.com/doi/epdf/10.1111/1755-0998.13706
+https://www.nature.com/articles/s41437-020-0348-2"
+
+ok I went ahead and read through [Thia 2022](https://onlinelibrary.wiley.com/doi/epdf/10.1111/1755-0998.13706), which is the first paper listed by the reviewer to try to better understand DAPC analysis. DAPC is a hypothesis-driven test of a priori population groupings. The risk of DAPC is that overfitting can easily occur when too many explanatory PCs are retained, particularly in panmictic groups. 
+
+In the previous version of the analysis, "Twenty principal components (PCs) and two discriminant axes (DAs) were retained for each
+DAPC analysis." 
 
 Here, let's say we are going to test a priori sampling locations as "populations" of m. birostris. 
 - there were 3 true sampling locations (PERU, MEX, IND) and one bycatch location.
@@ -529,6 +536,7 @@ Here, let's say we are going to test a priori sampling locations as "populations
 
 Here are the results: 
 
+There are some very weak differences, and it does appear that our bycatch sample is separating just a bit from PERU. However, the main takeaway here is that the birostris popualtion is clearly panmictic across these sampling sites. It's worth noting that these findings do also align exactly with the [Humble et al 2023 manta paper](https://onlinelibrary.wiley.com/doi/epdf/10.1111/mec.17220), which investigated M. birostris and M. alfredi, finding population structure in alfredi but none in birostris. 
 <img width="798" height="684" alt="image" src="https://github.com/user-attachments/assets/573e4e36-0c3d-492c-a3ad-a7f6bdbfae37" />
 
 
