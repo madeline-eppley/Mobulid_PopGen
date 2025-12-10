@@ -956,3 +956,117 @@ BYCI_RMT_69 CTR
 BYCI_RMT_71 WST
 ```
 
+I had a bit of a weird issue again with the pop map file formatting. I had edited it by hand, but this removed the tab spacing. although it was still correctly in a 2-column format, I had to manually reformat the tab spacing with this line: 
+
+```bash
+awk '{print $1 "\t" $2}' tarapacana_pop_map_3 > tmp && mv tmp tarapacana_pop_map_3
+```
+
+Here's what all of that process looked like: 
+```bash
+(base) [eppley.m@explorer-01 pop_maps]$ cat -A tarapacana_pop_map_3 | head
+BYC_RMB_57 EAST$
+BYC_RMM_30 EAST$
+BYC_RMO_45 EAST$
+BYC_RMT_04 EAST$
+BYC_RMT_06 EAST$
+BYC_RMT_07 EAST$
+BYC_RMT_27 EAST$
+BYC_RMT_28 OFF$
+BYC_RMT_29 EAST$
+BYC_RMT_46 EAST$
+(base) [eppley.m@explorer-01 pop_maps]$ 
+(base) [eppley.m@explorer-01 pop_maps]$ awk '{print NF}' tarapacana_pop_map_3 | sort | uniq -c
+     14 2
+(base) [eppley.m@explorer-01 pop_maps]$ awk '{print $1 "\t" $2}' tarapacana_pop_map_3 > tmp && mv tmp tarapacana_pop_map_3
+(base) [eppley.m@explorer-01 pop_maps]$ cat -A tarapacana_pop_map_3 | head
+BYC_RMB_57^IEAST$
+BYC_RMM_30^IEAST$
+BYC_RMO_45^IEAST$
+BYC_RMT_04^IEAST$
+BYC_RMT_06^IEAST$
+BYC_RMT_07^IEAST$
+BYC_RMT_27^IEAST$
+BYC_RMT_28^IOFF$
+BYC_RMT_29^IEAST$
+BYC_RMT_46^IEAST$
+```
+
+and now submit the new job with sbatch!
+
+```bash
+(base) [eppley.m@explorer-01 sep_pops]$ cat sep_pops_pipeline.sh
+#!/bin/bash
+
+#SBATCH --partition=lotterhos
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=32
+#SBATCH --mem=128G
+#SBATCH --time=48:00:00
+#SBATCH --job-name=stacks_tarapacana
+#SBATCH --output=sep_pops_stacks_tarapacana_%j.log
+#SBATCH --error=sep_pops_stacks_tarapacana_%j.err
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=eppley.m@northeastern.edu
+
+
+export PATH=/projects/gatins/programs_explorer/stacks_2.68/bin:$PATH
+
+
+echo "Sample list:"
+cat /projects/gatins/2025_Mobulid/tarapacana/pop_maps/tarapacana_pop_map_3
+
+echo "Starting denovo_map.pl"
+
+denovo_map.pl \
+  -m 3 \
+  -M 3 \
+  -n 2 \
+  -T 32 \
+  -o /projects/gatins/2025_Mobulid/tarapacana/sep_pops \
+  --popmap /projects/gatins/2025_Mobulid/tarapacana/pop_maps/tarapacana_pop_map_3 \
+  --samples /projects/gatins/2025_Mobulid_UCSC/RAD_all_combined_bycatch/trimmed90 \
+  -X "populations:-r 0.8 -p 1 --min-maf 0.05 --write-single-snp --vcf --genepop --structure --fstats --hwe -t 30"
+
+
+ls -l /projects/gatins/2025_Mobulid/tarapacana/sep_pops
+
+echo "populations module done"
+
+echo "starting vcftools"
+module load vcftools # this is just globally available on explorer, slay
+
+# input VCF from stacks population run
+INPUT_VCF="/projects/gatins/2025_Mobulid/tarapacana/sep_pops/populations.snps.vcf"
+
+OUTDIR="/projects/gatins/2025_Mobulid/tarapacana/sep_pops"
+mkdir -p ${OUTDIR}
+
+# filter by minimum depth per genotype (minDP = 10)
+vcftools --vcf ${INPUT_VCF} \
+         --minDP 10 \
+         --recode --recode-INFO-all \
+         --out ${OUTDIR}/minDP10_sep_pops
+
+# filter for sites present in >= 80% of individuals
+vcftools --vcf ${OUTDIR}/minDP10_sep_pops.recode.vcf \
+         --max-missing 0.8 \
+         --recode --recode-INFO-all \
+         --out ${OUTDIR}/minDP10_maxmiss0.8_sep_pops
+
+# remove individuals with >40% missing data
+# 1: compute missingness per individual
+vcftools --vcf ${OUTDIR}/minDP10_maxmiss0.8_sep_pops.recode.vcf \
+         --missing-indv \
+         --out ${OUTDIR}/missingness_sep_pops
+
+# 2: generate a list of individuals to remove
+awk '$5 > 0.4 {print $1}' ${OUTDIR}/missingness_sep_pops.imiss > ${OUTDIR}/remove_individuals_sep_pops.txt
+
+# now filter out individuals
+vcftools --vcf ${OUTDIR}/minDP10_maxmiss0.8_sep_pops.recode.vcf \
+         --remove ${OUTDIR}/remove_individuals_sep_pops.txt \
+         --recode --recode-INFO-all \
+         --out ${OUTDIR}/minDP10_maxmiss0.8_filtInd_sep_pops
+```
