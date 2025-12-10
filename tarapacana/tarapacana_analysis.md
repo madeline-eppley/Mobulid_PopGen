@@ -932,3 +932,27 @@ barplot(t(qmatrix), col = rainbow(best_k), border = NA,
 
 ## testing with 2 populations
 Based on my PCA, I think there might be a little bit of differentiation between the BYC_RMT_69 sample and the rest. 
+
+I'm going to separate samples 69 and 71 into their own populations, called "CTR" for central pacific and "WST" for western pacific (based on sampling locations). Then I'm going to group samples 28 and 49 into their own population called OFF for offshore. I'm making this choice because those two samples are grouping separately in the PCA on both PC1 and PC2 from the rest of the samples, which I'm going to call "EAST" for eastern Pacific. 
+
+I also removed the duplicate sample BYC_RMB_56 (note from above: removed sample 56, which had higher missingness than sample 57 (~4% vs 0.7%))
+
+Here's the new pop map:
+```bash
+(base) [eppley.m@explorer-01 pop_maps]$ cat tarapacana_pop_map_3
+BYC_RMB_57 EAST
+BYC_RMM_30 EAST
+BYC_RMO_45 EAST
+BYC_RMT_04 EAST
+BYC_RMT_06 EAST
+BYC_RMT_07 EAST
+BYC_RMT_27 EAST
+BYC_RMT_28 OFF
+BYC_RMT_29 EAST
+BYC_RMT_46 EAST
+BYC_RMT_49 OFF
+BYC_RMT_59 EAST
+BYCI_RMT_69 CTR
+BYCI_RMT_71 WST
+```
+
