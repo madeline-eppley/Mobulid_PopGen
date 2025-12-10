@@ -1,7 +1,7 @@
 # mobula birostris
 overall results - population structure
-<img width="842" height="702" alt="Screenshot 2025-11-25 at 8 57 22 AM" src="https://github.com/user-attachments/assets/9b2f6d0e-cc4b-493a-9c7c-b67e3d3b5f08" />
 
+<img width="857" height="721" alt="Screenshot 2025-12-09 at 11 12 12 PM" src="https://github.com/user-attachments/assets/a9631752-401d-42cc-b497-8c8cbb279ade" />
 
 Stats for reporting in publication: 
 - Max missingness at the individual level was 0.37, mean was 0.05
