@@ -3,16 +3,17 @@
 ## this script covers VCF -> gl, PCA, LEA ancestry, and Fst outliers ##
 
 library(vcfR)
-library(adegenet)
+library(pcadapt)
 library(SNPRelate)
 library(ggplot2)
-library(ggrepel)
 library(pheatmap)
 library(LEA)
+
+library(adegenet)
+library(ggrepel)
 library(dplyr)
 library(tidyr)
 library(RColorBrewer)
-library(viridis)
 library(dartR)
 library(reshape2)
 library(poppr)
@@ -30,14 +31,14 @@ gl_bir <- vcfR2genlight(vcf_bir)
 
 # initial data exploration - make a PCA
 pca_bir <- glPca(gl_bir, nf=3)
-scatter(pca_bir) # don't like these labels
+#scatter(pca_bir)
 
 pca_df_bir <- data.frame(
   PC1 = pca_bir$scores[,1],
   PC2 = pca_bir$scores[,2],
   Sample = indNames(gl_bir))
 
-# plot again with better labels
+# plot 
 ggplot(pca_df_bir, aes(x=PC1, y=PC2)) +
   geom_point(size=2, color="blue") +
   geom_text_repel(aes(label=Sample),
@@ -105,15 +106,17 @@ rel_df_bir <- rel_df_bir[!duplicated(t(apply(rel_df_bir[,1:2], 1, sort))), ]
 rel_df_bir <- rel_df_bir[order(-rel_df_bir$kinship), ]
 
 # top related pairs
-head(rel_df_bir, 10) # highest value is 0.01, great
+head(rel_df_bir, 10) # highest value is 0.1, great
 
-pheatmap(
+relate <- pheatmap(
   kin_mat_bir,
   labels_row = sample_names_bir,
   labels_col = sample_names_bir,
   clustering_distance_rows = "euclidean",
   clustering_distance_cols = "euclidean",
-  main = "Pairwise Relatedness (KING kinship coefficients) bir")
+  main = "Pairwise Genomic Relatedness, M. birostris")
+
+ggsave("/Users/madelineeppley/Desktop/manta/birostris/birostris_relatedness.png", relate, width = 8, height = 6, dpi = 600)
 
 ## looks great here - now no relatedness between samples 
 
@@ -141,14 +144,7 @@ barplot(t(qmatrix), col = rainbow(best_k), border = NA,
         names.arg = sample_names, las = 2, cex.names = 0.8,
         main = paste("birostris", best_k))
 
-# heterozygosity - this is still showing per locus heterozygosity
-gl <- vcfR2genlight(vcf_bir)
-het_per_ind <- glMean(gl, alleleAsUnit = FALSE)
-barplot(het_per_ind, las=2, main="Observed heterozygosity per sample", ylab="Hobs")
-
-
 # pcadapt
-library(pcadapt)
 vcf_bir_path <- "/Users/madelineeppley/Desktop/manta/birostris/minDP10_maxmiss0.8_filtInd.recode.vcf"
 geno_bir <- read.pcadapt(vcf_bir_path, type = "vcf")
 obj <- pcadapt(geno_bir, K = 1)
@@ -213,6 +209,9 @@ centroid_sep <- pca_df_sep %>%
 pca_df_sep <- pca_df_sep %>%
   left_join(centroid_sep, by = "pop")
 
+xlabel <- paste0("PC1 (", round(eig[1], 1), "%)")
+ylabel <- paste0("PC2 (", round(eig[2], 1), "%)")
+
 pca_plot_separate <- ggplot(data = pca_df_sep, aes(x = PC1, y = PC2)) +
   stat_ellipse(aes(color = pop), 
                type = "norm",
@@ -236,7 +235,7 @@ pca_plot_separate <- ggplot(data = pca_df_sep, aes(x = PC1, y = PC2)) +
                      name = "Population",
                      breaks = c("IND", "PER", "REV", "BYC"),
                      labels = c("India", "Peru", "Mexico", "Bycatch")) +
-  labs(x = xlab, y = ylab,
+  labs(x = xlabel, y = ylabel,
        title = "Mobula birostris") +
   theme_classic() +
   theme(
@@ -258,17 +257,11 @@ pca_plot_separate <- ggplot(data = pca_df_sep, aes(x = PC1, y = PC2)) +
 
 pca_plot_separate
 
-ggsave("/Users/madelineeppley/Desktop/manta/birostris/birostris_PCA.png", pca_plot_separate, width = 8, height = 6, dpi = 300)
+ggsave("/Users/madelineeppley/Desktop/manta/birostris/birostris_PCA.png", pca_plot_separate, width = 8, height = 6, dpi = 600)
 
 #######
 # DAPC
 #######
-
-## question for later - how to choose # of axes retained?
-# notes from Humble github:
-# # Based on the sampling locations, K was set to 5 (peru and pacific = 1). 
-# Therefore, 4 principal components were retained in the DAPC.
-
 pop(gl_bir) <- popmap$pop[match(indNames(gl_bir), popmap$sample)]
 
 # set a nice color palette :o
@@ -277,11 +270,22 @@ pop_colors <- c("IND" = "#6DBAA4",
                 "PER" = "#8C9FCB",
                 "BYC" = "#DA8EC0")
 
-# run the dapc analysis, keep 8 PCs --- let's revisit this sometime
+set.seed(999)
+grp <- find.clusters(gl_bir,
+                     scale = FALSE,
+                     n.pca = 10,      
+                     choose.n.clust = TRUE,
+                     max.n.clust = 10) # optimal 1 cluster
+
+grp
+
+#plot(grp$Kstat, type="b", xlab="K", ylab="BIC")
+
+# run the dapc analysis, keep 4 PCs --- revisited this and decreased from original 8
 dapc_result <- dapc(gl_bir,
                     pop = pop(gl_bir),
-                    n.pca = 8,
-                    n.da = 2)
+                    n.pca = 4, # based on sampling locations, K is set to 4 (IND, REV, PER, BYC)
+                    n.da = 3) # one minus n PCA retained
 
 # df for plotting DAPC
 dapc_df <- data.frame(
@@ -353,7 +357,8 @@ dapc_plot <- ggplot(data = dapc_df, aes(x = LD1, y = LD2)) +
 
 dapc_plot
 
-ggsave("/Users/madelineeppley/Desktop/manta/birostris/birostris_DAPC.png", dapc_plot, width = 8, height = 6, dpi = 300)
+
+ggsave("/Users/madelineeppley/Desktop/manta/birostris/birostris_DAPC.png", dapc_plot, width = 8, height = 6, dpi = 600)
 
 ###############
 # Fst heatmaps
@@ -397,7 +402,7 @@ fst_heatmap <- ggplot(fst_melted, aes(Var1, Var2, fill = value)) +
     legend.position = "right")
 
 fst_heatmap
-ggsave("/Users/madelineeppley/Desktop/manta/birostris/birostris_Fstheatmap.png", fst_heatmap, width = 8, height = 6, dpi = 300)
+ggsave("/Users/madelineeppley/Desktop/manta/birostris/birostris_Fstheatmap.png", fst_heatmap, width = 8, height = 6, dpi = 600)
 
 ############
 ### AMOVA
@@ -419,7 +424,7 @@ amova.pvalues <- ade4::randtest(p.amova, nrepet = 999)
 # overall fst  = Phi statistic and return both that and p-value
 overall_fst <- p.amova$statphi$Phi[3]
 overall_pval <- amova.pvalues$pvalue
-overall_fst 
+overall_fst # 0.004515259
 overall_pval
 # AMOVA FST = 0.0045; p = 0.001
 
@@ -532,7 +537,7 @@ combined_structure <- wrap_plots(
   heights = c(rep(1, 5), 0.4))
 
 ggsave("/Users/madelineeppley/Desktop/manta/birostris/birostris_STRUCTURE.png", combined_structure, 
-       width = 12, height = 11, dpi = 300)
+       width = 12, height = 11, dpi = 600)
 
 ###################
 ## multipanel plot!
@@ -614,3 +619,7 @@ final_figure <- wrap_plots(
       plot.tag = element_text(size = 14, face = "bold")))
 
 final_figure
+
+# I instead saved it as a PDF in US LETTER size because the font text was scaled better, this size was too small
+#ggsave("/Users/madelineeppley/Desktop/manta/birostris/birostris_FULLFIGURE.png", final_figure, 
+       #width = 16, height = 15, dpi = 600)
