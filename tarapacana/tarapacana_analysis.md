@@ -1070,3 +1070,20 @@ vcftools --vcf ${OUTDIR}/minDP10_maxmiss0.8_sep_pops.recode.vcf \
          --recode --recode-INFO-all \
          --out ${OUTDIR}/minDP10_maxmiss0.8_filtInd_sep_pops
 ```
+
+```bash
+scp eppley.m@login.explorer.northeastern.edu:/projects/gatins/2025_Mobulid/tarapacana/sep_pops/minDP10_maxmiss0.8_filtInd_sep_pops.recode.vcf  ~/Desktop/manta/tarapacana
+```
+
+Let's get the file into R and take a look at the results!
+
+We have some evidence of pop structure between offshore, central, western, and the main "eastern" cluster
+<img width="1674" height="1308" alt="image" src="https://github.com/user-attachments/assets/8568048e-62a4-42d6-a554-1961908e88de" />
+
+
+However the DAPC results are super weird, essentially this is suggesting every individual should be it's own cluster
+<img width="1674" height="1308" alt="image" src="https://github.com/user-attachments/assets/59d8e9e2-2490-46cd-90fc-44d3e2845237" />
+
+Here's the DAPC plot with n.pc = 4 and n.da = 3
+<img width="1674" height="1308" alt="image" src="https://github.com/user-attachments/assets/bab673c3-76ba-46d3-96af-4bf4b1df9416" />
+
