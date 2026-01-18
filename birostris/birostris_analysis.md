@@ -545,6 +545,91 @@ actually shows more difference between IND and BYC sample - Fst increases from a
 <img width="1593" height="1365" alt="image" src="https://github.com/user-attachments/assets/d4f3188a-300a-4342-af1a-0c25459ca783" />
 
 
+## re-testing parameter space and building catalog on loci >10x only
+i'm going to revisit to see if I can optimize the catalog building and parameter space optimization for birostris. 
 
+new script will build the catalog on loci >10x only, then test parameter space
+
+```bash
+#!/bin/bash
+
+#SBATCH --partition=lotterhos
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=32
+#SBATCH --mem=128G
+#SBATCH --time=48:00:00
+#SBATCH --job-name=stacks_birostris
+#SBATCH --output=stacks_birostris_%j.log
+#SBATCH --error=stacks_birostris_%j.err
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=eppley.m@northeastern.edu
+
+export PATH=/projects/gatins/programs_explorer/stacks_2.68/bin:$PATH
+
+SAMPLES_DIR="/projects/gatins/2025_Mobulid_UCSC/RAD_all_combined_bycatch/trimmed90"
+BASE_DIR="/projects/gatins/2025_Mobulid/birostris"
+POPMAP="/projects/gatins/2025_Mobulid/birostris/pop_map_birostris"
+
+echo "Sample list:"
+cat ${POPMAP}
+
+# high coverage samples (>10x) for catalog building
+HIGH_COV="BYC_RMB_01 IN_1_MB IN_2_MB IN_4_MB IN_5_MB IN_6_MB IN_7_MB PER_001_MB PER_003_MB PER_004_MB PER_005_MB PER_006_MB PER_007_MB PER_DZW81_4_MB REV_10_MB REV_13_MB REV_14_MB_B REV_15_MB REV_17_MB REV_18_MB REV_19_MB REV_20_MB_B"
+
+# all samples
+ALL_SAMPLES="BYC_RMB_01 IN_1_MB IN_18_MB_B IN_2_MB IN_4_MB IN_5_MB IN_6_MB IN_7_MB PER_001_MB PER_003_MB PER_004_MB PER_005_MB PER_006_MB PER_007_MB PER_008_MB PER_DZW81_4_MB REV_1_MB REV_10_MB REV_13_MB REV_14_MB_B REV_15_MB REV_17_MB REV_18_MB REV_19_MB REV_20_MB_B REV_5_MB"
+
+mkdir -p ${BASE_DIR}/opt
+
+m=3
+
+# Paris et al. 2017: M=2-5 is testing range
+# Testing M=2,3,4,5 with n=M-1, n=M, n=M+1
+for M in 2 3 4 5; do
+    
+    echo "=== Running ustacks with m=${m}, M=${M} ==="
+    USTACKS_DIR="${BASE_DIR}/opt/ustacks_m${m}_M${M}"
+    mkdir -p ${USTACKS_DIR}
+    
+    id=1
+    for sample in $ALL_SAMPLES; do
+        ustacks -f ${SAMPLES_DIR}/${sample}.fq -o ${USTACKS_DIR} -i $id -m $m -M $M -p 32
+        ((id++))
+    done
+    
+    for n in $((M - 1)) $M $((M + 1)); do
+        
+        echo "=== Building catalog and running populations: m=${m}, M=${M}, n=${n} ==="
+        OUT_DIR="${BASE_DIR}/opt/m${m}_M${M}_n${n}"
+        mkdir -p ${OUT_DIR}
+        
+        # copy ustacks output
+        cp ${USTACKS_DIR}/*.tsv ${OUT_DIR}/
+        
+        # cstacks - HIGH COVERAGE samples only
+        cstacks_cmd="cstacks -o ${OUT_DIR} -p 32 -n ${n}"
+        for sample in $HIGH_COV; do
+            cstacks_cmd="$cstacks_cmd -s ${OUT_DIR}/${sample}"
+        done
+        eval $cstacks_cmd
+        
+        # sstacks - ALL samples
+        for sample in $ALL_SAMPLES; do
+            sstacks -c ${OUT_DIR}/catalog -s ${OUT_DIR}/${sample} -o ${OUT_DIR} -p 32
+        done
+        
+        # tsv2bam and gstacks
+        tsv2bam -P ${OUT_DIR} -M ${POPMAP} -t 32
+        gstacks -P ${OUT_DIR} -M ${POPMAP} -t 32
+        
+        # populations with r80 for optimization plotting
+        populations -P ${OUT_DIR} -M ${POPMAP} -r 0.8 -p 3 -t 30
+        
+    done
+done
+
+ls -l ${BASE_DIR}/opt/
+```
 
 
