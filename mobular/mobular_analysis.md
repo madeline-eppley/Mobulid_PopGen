@@ -126,3 +126,23 @@ done
 
 ls -l ${BASE_DIR}/opt/
 ```
+
+## potential relatedness issue
+
+| Sample | Date | Species ID | Sex | Latitude | Longitude | Decimal Lat | Decimal Lon |
+|--------|------|------------|-----|----------|-----------|-------------|-------------|
+| BYC_RMM_32 | 11/29/19 | RMM | H (female) | 0045N | 08759W | 0.75°N | -87.98°W |
+| BYC_RMM_33 | 11/29/19 | RMM | H (female) | 0045N | 08759W | 0.75°N | -87.98°W |
+
+
+<img width="2973" height="2043" alt="image" src="https://github.com/user-attachments/assets/55f38974-83ae-4bdc-8a37-439b1d371c7f" />
+
+<img width="1638" height="1125" alt="image" src="https://github.com/user-attachments/assets/0c4cc3a8-9d23-4be2-90c7-c1e55631c92d" />
+
+<img width="1638" height="1125" alt="image" src="https://github.com/user-attachments/assets/dc66593f-d26e-4fc2-ba7a-711543edba93" />
+
+this is also seen in the phylogenetic tree from the bycatch report:
+<img width="468" height="508" alt="image" src="https://github.com/user-attachments/assets/92bf6ad5-ba9d-4bad-af89-878e8838e2c6" />
+
+
+
