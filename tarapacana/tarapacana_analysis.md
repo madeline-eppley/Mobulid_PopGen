@@ -1114,17 +1114,15 @@ BASE_DIR="/projects/gatins/2025_Mobulid/tarapacana"
 POPMAP="/projects/gatins/2025_Mobulid/tarapacana/pop_map_tarapacana_nodup"
 POPMAP_OPT="/projects/gatins/2025_Mobulid/tarapacana/pop_map_tarapacana_opt"
 
-# NOTE: BYC_RMB_56 removed - duplicate/highly related to BYC_RMB_57 (kinship ~0.498)
+# BYC_RMB_56 removed - duplicate/highly related to BYC_RMB_57 (kinship ~0.498)
 # BYC_RMB_56 had higher missingness (~4% vs 0.7%)
-# All remaining samples are >10x coverage, so no high-coverage filtering needed
-
-echo "Sample list (excluding duplicate BYC_RMB_56):"
+# all remaining samples are >10x coverage, so no high-coverage filtering needed
 cat ${POPMAP}
 
-# Create single-population map for optimization 
+# single pop map
 awk '{print $1 "\t" "OPT"}' ${POPMAP} > ${POPMAP_OPT}
 
-# All samples
+# all samples
 ALL_SAMPLES="BYC_RMB_57 BYC_RMM_30 BYC_RMO_45 BYC_RMT_04 BYC_RMT_06 BYC_RMT_07 BYC_RMT_27 BYC_RMT_28 BYC_RMT_29 BYC_RMT_46 BYC_RMT_49 BYC_RMT_59 BYCI_RMT_69 BYCI_RMT_71"
 
 mkdir -p ${BASE_DIR}/opt
@@ -1132,10 +1130,10 @@ mkdir -p ${BASE_DIR}/opt
 m=3
 
 # Paris et al. 2017: M=2-5 is testing range
-# Testing M=2,3,4,5 with n=M-1, n=M, n=M+1
+# testing M=2,3,4,5 with n=M-1, n=M, n=M+1
 for M in 2 3 4 5; do
     
-    echo "=== Running ustacks with m=${m}, M=${M} ==="
+    echo "~~~ Running ustacks with m=${m}, M=${M} ~~~"
     USTACKS_DIR="${BASE_DIR}/opt/ustacks_m${m}_M${M}"
     mkdir -p ${USTACKS_DIR}
     
@@ -1147,7 +1145,7 @@ for M in 2 3 4 5; do
     
     for n in $((M - 1)) $M $((M + 1)); do
         
-        echo "=== Building catalog and running populations: m=${m}, M=${M}, n=${n} ==="
+        echo "~~~ Building catalog and running populations: m=${m}, M=${M}, n=${n} ~~~"
         OUT_DIR="${BASE_DIR}/opt/m${m}_M${M}_n${n}"
         mkdir -p ${OUT_DIR}
         
@@ -1178,3 +1176,9 @@ done
 
 ls -l ${BASE_DIR}/opt/
 ```
+
+### meeting notes with Remy and Melissa 2/3/2026
+after meeting with Remy and Mel, we decided to update the tarapacana pop map to have four groups: western, central, galapagos, and eastern (nearshore). This will give us larger sample sizes in our dataset for statistical analysis. We think then the structure plots might show slighly more differentation between "inshore" vs "offshore". although we only have the 1 western sample, that one is the most different so we will keep it in its own group so it doesn't pull the Fst of the central group. 
+
+
+
