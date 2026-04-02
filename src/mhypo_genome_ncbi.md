@@ -34,5 +34,21 @@ data
 (base) [eppley.m@d3037 ncbi_dataset]$ cd data
 (base) [eppley.m@d3037 data]$ ls
 assembly_data_report.jsonl  dataset_catalog.json  GCF_963921235.1
+```
+### build indexes
+then I immediately built indexes while on the srun node and moved the FASTA to the reference_genome dir
 
 ```
+(base) [eppley.m@d3037 data]$
+cp /projects/gatins/2025_Mobulid/reference_genome/ncbi_dataset/data/GCF_963921235.1/GCF_963921235.1_sMobHyp1.1_genomic.fna \
+   /projects/gatins/2025_Mobulid/reference_genome/
+
+cd /projects/gatins/2025_Mobulid/reference_genome
+module load bwa/0.7.18
+module load samtools/1.21
+
+samtools faidx GCF_963921235.1_sMobHyp1.1_genomic.fna
+bwa index GCF_963921235.1_sMobHyp1.1_genomic.fna
+```
+
+
