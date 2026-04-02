@@ -1,5 +1,10 @@
 ## downloading the M. hypostoma genome from NCBI
 
+first thing, get off of the login node
+```
+srun --partition=lotterhos --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=16G --time=02:00:00 --pty bash
+```
+
 ```
 cd /projects/gatins/2025_Mobulid/reference_genome
 
