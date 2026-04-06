@@ -1,3 +1,4 @@
+```
 (base) [eppley.m@explorer-02 final_m3_M2_n2]$ cat populations.log
 populations v2.68, executed 2026-03-16 03:43:37 (zlib-1.2.11)
 populations -P /projects/gatins/2025_Mobulid/all_mobulids/final_m3_M2_n2 -M /projects/gatins/2025_Mobulid/all_mobulids/all_mobulids_popmap.txt -r 0.8 -p 2 --min-maf 0.05 --write-single-snp --vcf --genepop --structure --fstats --hwe -t 30
@@ -101,3 +102,4 @@ Population pair divergence statistics (more in populations.fst_summary.tsv and p
   mobular-tarapacana: mean Fst: 0.70738; mean Phi_st: 0.75654; mean Fst': 0.72099; mean Dxy: 0.008605
 
 Populations is done.
+```
