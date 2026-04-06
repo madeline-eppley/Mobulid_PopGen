@@ -1,0 +1,103 @@
+(base) [eppley.m@explorer-02 final_m3_M2_n2]$ cat populations.log
+populations v2.68, executed 2026-03-16 03:43:37 (zlib-1.2.11)
+populations -P /projects/gatins/2025_Mobulid/all_mobulids/final_m3_M2_n2 -M /projects/gatins/2025_Mobulid/all_mobulids/all_mobulids_popmap.txt -r 0.8 -p 2 --min-maf 0.05 --write-single-snp --vcf --genepop --structure --fstats --hwe -t 30
+Locus/sample distributions will be written to '/projects/gatins/2025_Mobulid/all_mobulids/final_m3_M2_n2/populations.log.distribs'.
+populations parameters selected:
+  Percent samples limit per population: 0.8
+  Locus Population limit: 2
+  Percent samples overall: 0
+  Minor allele frequency cutoff: 0.05
+  Maximum observed heterozygosity cutoff: 1
+  Applying Fst correction: none.
+  Pi/Fis kernel smoothing: off
+  F-stats kernel smoothing: off
+  Bootstrap resampling: off
+
+Parsing population map...
+The population map contained 109 samples, 5 population(s), 1 group(s).
+Working on 109 samples.
+Working on 5 population(s):
+    birostris: BYC_RMB_01, IN_1_MB, IN_2_MB, IN_4_MB, IN_5_MB, IN_6_MB, IN_7_MB, PER_001_MB, PER_003_MB, PER_004_MB, PER_005_MB, PER_006_MB, 
+               PER_007_MB, PER_DZW81_4_MB, REV_10_MB, REV_13_MB, REV_14_MB_B, REV_15_MB, REV_17_MB, REV_18_MB, REV_19_MB, REV_20_MB_B
+    munkiana: NIC_2728_01, NIC_2740_01, PER_DCLCW130_MM, PER_DCLCW87_MM, PER_DPPW019_MM, PER_DPPW28_MM, PER_DPPW98_MM, mu_11, mu_12, mu_21, 
+              mu_3, mu_4, mu_7
+    thurstoni: BYC_DESC_60, BYC_DESC_62, BYC_RMO_40, BYC_RMO_47, BYC_RMO_48, BYC_RMU_16, BYC_RMU_17, BYC_RMU_18, BYC_RMU_26, IN_10_MB_B, 
+               IN_12_MB_B, MT_01_EC, MT_02_ELP, MT_03_EC, MT_04_EC_conc, MT_04_ELP, MT_05_EC, MT_05_ELP, MT_07_EC_conc, MT_07_ELP, MT_08_EC_conc, 
+               MT_09_EC_conc, MT_10_EC, NIC_6003_E, NIC_6003_F, NIC_6016_1, NIC_6048, mthur_446
+    mobular: BYCI_DESC_67, BYCI_RMM_66, BYCI_RMM_68, BYCI_RMM_72, BYC_DESC_54, BYC_DESC_55, BYC_DESC_63, BYC_DESC_64, BYC_RMB_34, BYC_RMB_36, 
+             BYC_RMM_02, BYC_RMM_03, BYC_RMM_05, BYC_RMM_10, BYC_RMM_11, BYC_RMM_12, BYC_RMM_13, BYC_RMM_14, BYC_RMM_20, BYC_RMM_21, BYC_RMM_22, 
+             BYC_RMM_24, BYC_RMM_25, BYC_RMM_31, BYC_RMM_32, BYC_RMM_35, BYC_RMM_38, BYC_RMM_44, BYC_RMM_50, BYC_RMM_51, BYC_RMM_58, BYC_RMU_41, 
+             BYC_RMU_42
+    tarapacana: BYCI_RMT_69, BYCI_RMT_71, BYC_RMB_57, BYC_RMM_30, BYC_RMO_45, BYC_RMT_04, BYC_RMT_06, BYC_RMT_07, BYC_RMT_27, BYC_RMT_28, 
+                BYC_RMT_29, BYC_RMT_46, BYC_RMT_49
+Working on 1 group(s) of populations:
+    defaultgrp: birostris, munkiana, thurstoni, mobular, tarapacana
+
+SNPs and calls will be written in VCF format to '/projects/gatins/2025_Mobulid/all_mobulids/final_m3_M2_n2/populations.snps.vcf'
+Polymorphic sites in GenePop format will be written to '/projects/gatins/2025_Mobulid/all_mobulids/final_m3_M2_n2/populations.snps.genepop'
+Warning: Genepop: The order in which samples appear was modified (as the input population map is not sorted).Polymorphic sites in Structure format will be written to '/projects/gatins/2025_Mobulid/all_mobulids/final_m3_M2_n2/populations.structure'
+Raw haplotypes will be written to '/projects/gatins/2025_Mobulid/all_mobulids/final_m3_M2_n2/populations.haplotypes.tsv'
+Population-level summary statistics will be written to '/projects/gatins/2025_Mobulid/all_mobulids/final_m3_M2_n2/populations.sumstats.tsv'
+Population-level haplotype summary statistics will be written to '/projects/gatins/2025_Mobulid/all_mobulids/final_m3_M2_n2/populations.hapstats.tsv'
+
+Processing data in batches:
+  * load a batch of catalog loci and apply filters
+  * compute SNP- and haplotype-wise per-population statistics
+  * compute SNP- and haplotype-wise deviation from HWE
+  * compute F-statistics
+  * write the above statistics in the output files
+  * export the genotypes/haplotypes in specified format(s)
+More details in '/projects/gatins/2025_Mobulid/all_mobulids/final_m3_M2_n2/populations.log.distribs'.
+
+Now processing...
+Batch 1 
+Batch 2 
+Batch 3 
+Batch 4 
+Batch 5 
+Batch 6 
+Batch 7 
+Batch 8 
+Batch 9 
+Batch 10 
+Batch 11 
+Batch 12 
+
+Removed 543349 loci that did not pass sample/population constraints from 662932 loci.
+Kept 119583 loci, composed of 10794894 sites; 337284 of those sites were filtered, 109906 variant sites remained.
+Mean genotyped sites per locus: 89.84bp (stderr 0.00).
+
+Population summary statistics (more detail in populations.sumstats_summary.tsv):
+  birostris: 21.377 samples per locus; pi: 0.019841; all/variant/polymorphic sites: 7811411/80672/5227; private alleles: 18995
+  munkiana: 12.747 samples per locus; pi: 0.01203; all/variant/polymorphic sites: 7261116/75186/2599; private alleles: 19769
+  thurstoni: 25.834 samples per locus; pi: 0.029649; all/variant/polymorphic sites: 6757994/69980/9403; private alleles: 18162
+  mobular: 32.519 samples per locus; pi: 0.06755; all/variant/polymorphic sites: 8343989/86090/19705; private alleles: 29459
+  tarapacana: 12.858 samples per locus; pi: 0.03553; all/variant/polymorphic sites: 8188597/84555/8566; private alleles: 26869
+
+Number of variable sites found to be significantly out of Hardy-Weinberg equilibrium (<0.05):
+  birostris: 356
+  munkiana: 232
+  thurstoni: 565
+  mobular: 1522
+  tarapacana: 510
+Number of loci found to be significantly out of Hardy-Weinberg equilibrium (<0.05):
+  birostris: 81154
+  munkiana: 77438
+  thurstoni: 65602
+  mobular: 74587
+  tarapacana: 82462
+(more detail in populations.sumstats.tsv and populations.hapstats.tsv)
+
+Population pair divergence statistics (more in populations.fst_summary.tsv and populations.phistats_summary.tsv):
+  birostris-munkiana: mean Fst: 0.88673; mean Phi_st: 0.90494; mean Fst': 0.88965; mean Dxy: 0.010155
+  birostris-thurstoni: mean Fst: 0.78209; mean Phi_st: 0.80779; mean Fst': 0.78246; mean Dxy: 0.0091035
+  birostris-mobular: mean Fst: 0.68004; mean Phi_st: 0.72403; mean Fst': 0.68488; mean Dxy: 0.0082451
+  birostris-tarapacana: mean Fst: 0.84315; mean Phi_st: 0.8712; mean Fst': 0.84303; mean Dxy: 0.0097333
+  munkiana-thurstoni: mean Fst: 0.8317; mean Phi_st: 0.85341; mean Fst': 0.83873; mean Dxy: 0.0096296
+  munkiana-mobular: mean Fst: 0.73583; mean Phi_st: 0.77577; mean Fst': 0.75404; mean Dxy: 0.0088877
+  munkiana-tarapacana: mean Fst: 0.85551; mean Phi_st: 0.87857; mean Fst': 0.857; mean Dxy: 0.009864
+  thurstoni-mobular: mean Fst: 0.70343; mean Phi_st: 0.74869; mean Fst': 0.70604; mean Dxy: 0.008483
+  thurstoni-tarapacana: mean Fst: 0.79513; mean Phi_st: 0.82612; mean Fst': 0.79882; mean Dxy: 0.0092736
+  mobular-tarapacana: mean Fst: 0.70738; mean Phi_st: 0.75654; mean Fst': 0.72099; mean Dxy: 0.008605
+
+Populations is done.
