@@ -1,3 +1,5 @@
-analysis for munkiana samples
+M. munkiana 
 
-<img width="779" height="773" alt="Screenshot 2026-01-20 at 9 09 59 AM" src="https://github.com/user-attachments/assets/d313ce58-c977-47d0-9c03-87b78ae83077" />
+population structure 
+
+<img width="8400" height="10800" alt="munkiana_FINALFIGURE" src="https://github.com/user-attachments/assets/9918cdef-4cae-4833-9080-a76a105a2e0b" />
