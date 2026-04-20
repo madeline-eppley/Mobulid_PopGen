@@ -257,5 +257,23 @@ grep -v "^#" ${OUTDIR}/minDP10_maxmiss0.8_filtInd.recode.vcf | wc -l
 ```
 
 
+### snmf cross-entropy values from R
+Storing these here so that I don't need to re-run snmf to make the supp. table 
+```R
+> for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_outliers, K=k)), "\n")
+K = 1 : 0.8488564 
+K = 2 : 0.7054615 
+K = 3 : 0.6976063 
+K = 4 : 0.7478396 
+K = 5 : 0.7649777 
+> for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_all, K=k)), "\n")
+K = 1 : 0.777778 
+K = 2 : 0.8252669 
+K = 3 : 0.888878 
+K = 4 : 0.967199 
+K = 5 : 1.032021 
+```
+
+
 
 
