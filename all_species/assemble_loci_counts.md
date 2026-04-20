@@ -1,13 +1,13 @@
 ## STACKS loci param opt counts figures
 ### for all species
 
-To scp the files from the `/opt` directory on explorer to local  `/Desktop/manta` folder, I used:
+To scp the files from the `/opt` directory on explorer to local  `/Desktop/manta` folder, I used this, but changed the species name directory for each species.
 
 ```bash
-
+scp eppley.m@login.explorer.northeastern.edu:/projects/gatins/2025_Mobulid/mobular/opt/loci_counts.csv ~/Desktop/manta
 ```
 
-
+### then in R, I made one script to create all supp. figure plots
 
 ```R
 ## assemble STACKS parameter space supp figure plots
