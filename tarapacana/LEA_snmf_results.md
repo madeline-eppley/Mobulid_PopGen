@@ -72,3 +72,21 @@ max  1.1734735 1.2369336 1.0379144 1.2808258 1.404073
 <img width="1470" height="1296" alt="image" src="https://github.com/user-attachments/assets/17a32aec-c88d-4063-b7e7-db333624fe9f" />
 
 
+
+### UPDATED 4/20/26
+### with final publication dataset
+```
+> for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_all, K=k)), "\n")
+K = 1 : 0.9230581 
+K = 2 : 1.16784 
+K = 3 : 1.365672 
+K = 4 : 1.541059 
+K = 5 : 1.718881 
+> for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_outliers, K=k)), "\n")
+K = 1 : 0.8310567 
+K = 2 : 0.9324761 
+K = 3 : 0.7722659 
+K = 4 : 0.910074 
+K = 5 : 1.185321 
+```
+
