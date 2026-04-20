@@ -1,14 +1,11 @@
-# ============================================================
-# THURSTONI FINAL FIGURE
-# VCF: thurstoni_final_v2.vcf (28 ind, 1,191 SNPs)
-# Pops: IND(2), MEX(5), NIC(4), ECU(8), BYC(9)
-# ============================================================
+### M. thurstoni analysis to produce publication figure ####
+# M. Eppley, v2. current version uploaded to github 4/20/2026
+
 library(vcfR); library(pcadapt); library(SNPRelate); library(ggplot2)
 library(pheatmap); library(LEA); library(adegenet); library(ggrepel)
 library(dplyr); library(tidyr); library(RColorBrewer); library(dartR)
 library(reshape2); library(poppr); library(ade4); library(patchwork)
 library(grid); library(gridExtra); library(maps)
-
 library(sf); library(rnaturalearth); library(rnaturalearthdata)
 
 outdir <- "/Users/madelineeppley/Desktop/manta26pub"
@@ -32,11 +29,12 @@ popmap <- data.frame(
 gl_thur <- vcfR2genlight(vcf_thur)
 pop(gl_thur) <- popmap$pop[match(indNames(gl_thur),popmap$sample)]
 n_snps_all <- nrow(vcf_thur@fix)
-cat("Thurstoni:",nInd(gl_thur),"individuals,",n_snps_all,"SNPs\n"); print(table(pop(gl_thur)))
+nInd(gl_thur) #28
+print(table(pop(gl_thur))) # BYC 9, ECU 8, IND 3, MEX 4, NIC 4
 
 pop_labels_df <- data.frame(pop=c("IND","MEX","NIC","ECU","BYC"),pop_label=c("India","Mexico","Nicaragua","Ecuador","Bycatch"))
 
-# --- MAP ---
+# range wide sampling map
 # IND=India, MEX=Pacific Mexico, NIC=Nicaragua, ECU=Ecuador, BYC=Bycatch
 sample_coords <- data.frame(
   sample = popmap$sample,
@@ -52,7 +50,7 @@ sample_coords_map <- sample_coords %>% filter(!is.na(lat)) %>%
 world_map <- map_data("world", wrap = c(0, 360))
 pop_n <- popmap %>% group_by(pop) %>% summarise(n=n())
 
-# Load IUCN range (optional) - shift to Pacific coords
+# iucn range
 tryCatch({
   iucn_data <- st_read("/Users/madelineeppley/Desktop/manta/rangemap/SHARKS_RAYS_CHIMAERAS/SHARKS_RAYS_CHIMAERAS.shp", quiet=TRUE)
   thurstoni_range <- iucn_data %>% filter(sci_name == "Mobula thurstoni") %>% st_make_valid()
@@ -76,7 +74,7 @@ range_map <- range_map +
                           axis.title=element_blank(),axis.text=element_text(size=9)) + guides(fill=guide_legend(override.aes=list(size=5)))
 ggsave("/Users/madelineeppley/Desktop/manta26pub/thurstoni_map.png",range_map,width=12,height=4,dpi=600)
 
-# --- RELATEDNESS ---
+# relatedness analysis
 gds.fn <- "/Users/madelineeppley/Desktop/manta26pub/thur.gds"; showfile.gds(closeall=TRUE)
 snpgdsVCF2GDS("/Users/madelineeppley/Desktop/manta/finalvcfs/thurstoni_final_v2.vcf",gds.fn,method="biallelic.only")
 genofile <- snpgdsOpen(gds.fn); rel <- snpgdsIBDKING(genofile,autosome.only=FALSE); snpgdsClose(genofile)
@@ -86,9 +84,15 @@ annotation_df <- data.frame(Population=popmap$pop[match(sample_names_rel,popmap$
 relate <- pheatmap(kin_mat,labels_row=sample_names_rel,labels_col=sample_names_rel,annotation_row=annotation_df,annotation_col=annotation_df,
                    annotation_colors=list(Population=pop_colors),clustering_distance_rows="euclidean",clustering_distance_cols="euclidean",
                    main="Pairwise Genomic Relatedness, M. thurstoni",fontsize_row=6,fontsize_col=6,silent=TRUE)
+write.csv(kin_mat, "/Users/madelineeppley/Desktop/manta26pub/thurstoni_kinship_matrix.csv")
+diag(kin_mat) <- NA # set as NA so it doesnt return 0.5 as the highest relatedness
+max_rel <- which(kin_mat == max(kin_mat, na.rm=TRUE), arr.ind=TRUE)[1,]
+print(round(max(kin_mat, na.rm=TRUE), 4)) # highest relatedness 0.387
+print(rownames(kin_mat)[max_rel[1]]) # BYC_RMU_17
+print(colnames(kin_mat)[max_rel[2]]) # BYC_RMU_16
 ggsave("/Users/madelineeppley/Desktop/manta26pub/thurstoni_relatedness.png",relate,width=12,height=10,dpi=600)
 
-# --- PCA ALL ---
+# pca using all snps
 pca_all <- glPca(gl_thur,nf=10); eig_all <- pca_all$eig/sum(pca_all$eig)*100
 pca_df_all <- data.frame(PC1=pca_all$scores[,1],PC2=pca_all$scores[,2],sample=indNames(gl_thur),pop=pop(gl_thur)) %>% left_join(pop_labels_df,by="pop")
 centroid_all <- pca_df_all %>% group_by(pop) %>% summarise(PC1_cen=mean(PC1),PC2_cen=mean(PC2),n=n())
@@ -108,14 +112,14 @@ ggsave("/Users/madelineeppley/Desktop/manta26pub/thurstoni_PCA_allSNPs.png",
        pca_plot_all+labs(title="Mobula thurstoni")+theme(legend.position="bottom",legend.direction="horizontal",legend.title=element_blank(),
                                                          plot.title=element_text(size=13,face="italic",hjust=0.5))+guides(fill=guide_legend(override.aes=list(shape=21,size=5,alpha=0.8))),width=8,height=6,dpi=600)
 
-# --- PCADAPT ---
+# pcadapt
 geno_thur <- read.pcadapt("/Users/madelineeppley/Desktop/manta/finalvcfs/thurstoni_final_v2.vcf",type="vcf")
 obj <- pcadapt(geno_thur,K=1); pvals <- obj$pvalues; outliers <- which(pvals<0.01); n_outliers <- length(outliers)
 cat("\nOutlier SNPs:",n_outliers,"\n")
 vcf_out <- vcf_thur; vcf_out@fix <- vcf_thur@fix[outliers,,drop=FALSE]; vcf_out@gt <- vcf_thur@gt[outliers,,drop=FALSE]
 write.vcf(vcf_out,"/Users/madelineeppley/Desktop/manta26pub/thurstoni_outliers.vcf.gz"); system(paste0("gunzip -f ","/Users/madelineeppley/Desktop/manta26pub/thurstoni_outliers.vcf.gz"))
 
-# --- PCA OUTLIER ---
+# pca on outlier snps
 vcf_outliers <- read.vcfR("/Users/madelineeppley/Desktop/manta26pub/thurstoni_outliers.vcf")
 gl_outliers <- vcfR2genlight(vcf_outliers); pop(gl_outliers) <- popmap$pop[match(indNames(gl_outliers),popmap$sample)]
 pca_out <- glPca(gl_outliers,nf=10); eig_out <- pca_out$eig/sum(pca_out$eig)*100
@@ -137,7 +141,7 @@ ggsave("/Users/madelineeppley/Desktop/manta26pub/thurstoni_PCA_outlierSNPs.png",
        pca_plot_outliers+labs(title="Mobula thurstoni")+theme(legend.position="bottom",legend.direction="horizontal",legend.title=element_blank(),
                                                               plot.title=element_text(size=13,face="italic",hjust=0.5))+guides(fill=guide_legend(override.aes=list(shape=21,size=5,alpha=0.8))),width=8,height=6,dpi=600)
 
-# --- DAPC ---
+# dapc
 dapc_result <- dapc(gl_thur,pop=pop(gl_thur),n.pca=4,n.da=4)
 dapc_df <- data.frame(LD1=dapc_result$ind.coord[,1],LD2=dapc_result$ind.coord[,2],sample=indNames(gl_thur),pop=pop(gl_thur))
 centroid_dapc <- dapc_df %>% group_by(pop) %>% summarise(LD1_cen=mean(LD1),LD2_cen=mean(LD2),n=n())
@@ -157,18 +161,18 @@ ggsave("/Users/madelineeppley/Desktop/manta26pub/thurstoni_DAPC.png",
        dapc_plot+labs(title="Mobula thurstoni")+theme(legend.position="bottom",legend.direction="horizontal",legend.title=element_blank(),
                                                       plot.title=element_text(size=13,face="italic",hjust=0.5))+guides(fill=guide_legend(override.aes=list(shape=21,size=5,alpha=0.8))),width=8,height=6,dpi=600)
 
-# --- SNMF ---
+# snmf ancestry analysis
 unlink("/Users/madelineeppley/Desktop/manta26pub/thurstoni.geno")
 unlink("/Users/madelineeppley/Desktop/manta26pub/thurstoni.snmfProject", recursive=TRUE)
 unlink("/Users/madelineeppley/Desktop/manta26pub/thurstoni.snmf", recursive=TRUE)
 vcf2geno("/Users/madelineeppley/Desktop/manta/finalvcfs/thurstoni_final_v2.vcf","/Users/madelineeppley/Desktop/manta26pub/thurstoni.geno")
 project_all <- snmf("/Users/madelineeppley/Desktop/manta26pub/thurstoni.geno",K=1:5,entropy=TRUE,repetitions=10,project="new")
 
-# Cross-entropy plot - All SNPs
+# cross entropy plot with all snps
 png("/Users/madelineeppley/Desktop/manta26pub/thurstoni_CE_allSNPs.png", width=800, height=600)
 plot(project_all, col="blue", pch=19, cex=1.2, main="Cross-entropy: M. thurstoni - All SNPs")
 dev.off()
-cat("\nCross-entropy (All SNPs):\n")
+print("all snps ce values")
 for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_all, K=k)), "\n")
 unlink("/Users/madelineeppley/Desktop/manta26pub/thurstoni_outliers.geno")
 unlink("/Users/madelineeppley/Desktop/manta26pub/thurstoni_outliers.snmfProject", recursive=TRUE)
@@ -181,7 +185,7 @@ project_outliers <- snmf("/Users/madelineeppley/Desktop/manta26pub/thurstoni_out
 png("/Users/madelineeppley/Desktop/manta26pub/thurstoni_CE_outlierSNPs.png", width=800, height=600)
 plot(project_outliers, col="red", pch=19, cex=1.2, main="Cross-entropy: M. thurstoni - Outlier SNPs")
 dev.off()
-cat("\nCross-entropy (Outlier SNPs):\n")
+print("ce values from outlier snps")
 for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_outliers, K=k)), "\n")
 
 sample_names <- indNames(gl_thur); sample_pops <- pop(gl_thur)
@@ -205,15 +209,15 @@ structure_all <- ggplot(qdf_all_long,aes(x=x_pos,y=Proportion,fill=Cluster)) +
   theme(plot.title=element_text(size=12,face="bold",hjust=0),axis.text.x=element_blank(),axis.ticks.x=element_blank(),
         axis.title=element_blank(),axis.text.y=element_text(size=12),legend.position="none",panel.grid=element_blank(),plot.margin=margin(5,30,2,5))
 
-ce_out <- cross.entropy(project_outliers,K=2); qmat_out_str <- Q(project_outliers,K=2,run=which.min(ce_out))
-qdf_out_str <- as.data.frame(qmat_out_str); colnames(qdf_out_str) <- paste0("Cluster",1:2)
+ce_out <- cross.entropy(project_outliers,K=3); qmat_out_str <- Q(project_outliers,K=3,run=which.min(ce_out))
+qdf_out_str <- as.data.frame(qmat_out_str); colnames(qdf_out_str) <- paste0("Cluster",1:3)
 qdf_out_str$Sample <- sample_names; qdf_out_str$Pop <- factor(sample_pops,levels=pop_order)
 qdf_out_str <- qdf_out_str %>% arrange(Pop) %>% mutate(x_pos=1:n())
 qdf_out_long <- qdf_out_str %>% pivot_longer(cols=starts_with("Cluster"),names_to="Cluster",values_to="Proportion")
 structure_outlier <- ggplot(qdf_out_long,aes(x=x_pos,y=Proportion,fill=Cluster)) +
   geom_bar(stat="identity",width=1,color=NA) + geom_vline(data=pop_boundaries,aes(xintercept=x_end+0.5),color="white",linewidth=0.8) +
-  scale_fill_manual(values=structure_colors[c(3,4)]) + scale_y_continuous(expand=c(0,0),breaks=c(0,0.5,1),labels=c("0.0","0.5","1.0"),position="left") +
-  scale_x_continuous(expand=c(0,0),limits=c(0.5,max_x+3)) + annotate("text",x=max_x+2,y=0.5,label="K = 2",size=6,fontface="bold") +
+  scale_fill_manual(values=structure_colors[c(3,4,5)]) + scale_y_continuous(expand=c(0,0),breaks=c(0,0.5,1),labels=c("0.0","0.5","1.0"),position="left") +
+  scale_x_continuous(expand=c(0,0),limits=c(0.5,max_x+3)) + annotate("text",x=max_x+2,y=0.5,label="K = 3",size=6,fontface="bold") +
   ggtitle("Outlier SNPs") + coord_cartesian(clip="off") + theme_minimal() +
   theme(plot.title=element_text(size=12,face="bold",hjust=0),axis.text.x=element_blank(),axis.ticks.x=element_blank(),
         axis.title=element_blank(),axis.text.y=element_text(size=12),legend.position="none",panel.grid=element_blank(),plot.margin=margin(5,30,2,5))
@@ -223,13 +227,12 @@ pop_label_plot <- ggplot() + geom_text(data=pop_spans,aes(x=x_mid,y=0.5,label=di
   scale_x_continuous(limits=c(0.5,max_x+3),expand=c(0,0)) + scale_y_continuous(limits=c(0,1),expand=c(0,0)) +
   coord_cartesian(clip="off") + theme_void() + theme(plot.margin=margin(0,30,10,5))
 
-# --- AMOVA + FST with pairwise significance ---
+# AMOVA and fst pairwise significance
 pairwise_amova <- function(genind_obj, pop1, pop2, nrepet=9999) {
   keep <- pop(genind_obj) %in% c(pop1,pop2); gi_sub <- genind_obj[keep,]; pop(gi_sub) <- droplevels(pop(gi_sub))
   strata(gi_sub) <- data.frame(pops=pop(gi_sub))
   amova_r <- poppr.amova(gi_sub,~pops); amova_t <- ade4::randtest(amova_r,nrepet=nrepet)
-  list(phi_st=amova_r$statphi$Phi[length(amova_r$statphi$Phi)], p_value=amova_t$pvalue[1])
-}
+  list(phi_st=amova_r$statphi$Phi[length(amova_r$statphi$Phi)], p_value=amova_t$pvalue[1])}
 genI <- gl2gi(gl_thur); pops_gi <- genI$pop; strata(genI) <- data.frame(pops=pops_gi)
 p.amova <- poppr.amova(genI,~pops); amova.pvalues <- ade4::randtest(p.amova,nrepet=9999)
 overall_fst <- p.amova$statphi$Phi[length(p.amova$statphi$Phi)]; overall_pval <- amova.pvalues$pvalue[1]
@@ -239,13 +242,12 @@ fst_matrix <- fst_result$Fsts; fst_matrix[is.na(fst_matrix)] <- t(fst_matrix)[is
 pop_sizes <- table(pop(gl_thur))
 
 pval_matrix <- matrix(NA,nrow=nrow(fst_matrix),ncol=ncol(fst_matrix),dimnames=dimnames(fst_matrix))
-cat("\n=== PAIRWISE AMOVA ===\n")
+print("pairwise amova")
 for(i in 1:(nrow(fst_matrix)-1)){for(j in (i+1):ncol(fst_matrix)){
   p1 <- rownames(fst_matrix)[i]; p2 <- colnames(fst_matrix)[j]
   if(pop_sizes[p1]>=2 & pop_sizes[p2]>=2){
     res <- pairwise_amova(genI,p1,p2); pval_matrix[i,j] <- res$p_value; pval_matrix[j,i] <- res$p_value
-    cat(p1,"vs",p2,": FST =",round(fst_matrix[i,j],4),", p =",round(res$p_value,4),"\n")
-  }}}
+    cat(p1,"vs",p2,": FST =",round(fst_matrix[i,j],4),", p =",round(res$p_value,4),"\n")}}}
 
 get_upper_tri <- function(mat){mat[lower.tri(mat)]<-NA;return(mat)}
 fst_matrix_labeled <- fst_matrix; rownames(fst_matrix_labeled) <- pop_names_map[rownames(fst_matrix_labeled)]
@@ -266,7 +268,7 @@ fst_heatmap <- ggplot(fst_melted,aes(Var1,Var2,fill=value)) +
                           plot.subtitle=element_text(size=11,hjust=0.5,face="bold"),panel.grid=element_blank(),legend.position="right")
 ggsave("/Users/madelineeppley/Desktop/manta26pub/thurstoni_Fst_heatmap.png",fst_heatmap,width=8,height=6,dpi=600)
 
-# --- FINAL FIGURE ---
+# create the final figure :)
 layer1 <- range_map+theme(legend.position="right",plot.margin=margin(5,5,5,5))
 layer2 <- wrap_plots(pca_plot_all,pca_plot_outliers,ncol=2)
 layer3 <- wrap_plots(structure_all,structure_outlier,pop_label_plot,ncol=1,heights=c(1,1,0.3))
@@ -277,3 +279,22 @@ final_figure <- wrap_plots(layer1,layer2,layer3,layer4,ncol=1,heights=c(0.7,1.1,
                   tag_levels=list(c('A','B','C','D','E','','F','G')),
                   theme=theme(plot.title=element_text(size=18,face="bold.italic",hjust=0),plot.subtitle=element_text(size=14,hjust=0),plot.tag=element_text(size=16,face="bold")))
 ggsave("/Users/madelineeppley/Desktop/manta26pub/thurstoni_FINALFIGURE.png",final_figure,width=14,height=18,dpi=600)
+
+
+
+```R
+> for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_all, K=k)), "\n")
+K = 1 : 0.6466615 
+K = 2 : 0.6623363 
+K = 3 : 0.7291858 
+K = 4 : 0.7488793 
+K = 5 : 0.7856974 
+> print("ce values from outlier snps")
+[1] "ce values from outlier snps"
+> for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_outliers, K=k)), "\n")
+K = 1 : 0.4509788 
+K = 2 : 0.3491271 
+K = 3 : 0.4035229 
+K = 4 : 0.4001185 
+K = 5 : 0.5651528 
+```
