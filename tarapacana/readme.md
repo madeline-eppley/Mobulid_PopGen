@@ -2,7 +2,8 @@ M. tarapacana
 population structure results
 
 
-<img width="8400" height="10800" alt="tarapacana_FINALFIGURE" src="https://github.com/user-attachments/assets/698d8374-2536-4bb9-aa83-daa226559068" />
+<img width="8400" height="10800" alt="tarapacana_FINALFIGURE" src="https://github.com/user-attachments/assets/e7c3c0c2-33fb-4e13-8f55-ca0f9eff26c3" />
+
 
 
 
