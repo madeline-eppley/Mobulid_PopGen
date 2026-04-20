@@ -2,7 +2,7 @@
 
 This repository contains all code and figures for the manuscript: 
 
-"Genetic population structure and conservation implications for manta and devil rays in the Eastern Pacific Ocean"
+"Genetic population structure and misidentification reveal the need for regionally informed management of manta and devil rays"
 
 Authors: Melissa R. Cronin, Madeline G. Eppley, Remy Gatins, Giacomo Bernardi, Maria de Lourdes Torres, Daniel Fernando, Michel Guererro, Jon Lopez, Gala Moreno, Marta D. Palacios, Alessandro Ponzo, Salvador Siu, Joshua D. Stewart, Daniel B. Wright, Kelly M. Zilliacus, Donald A. Croll
 
