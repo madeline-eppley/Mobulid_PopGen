@@ -230,7 +230,7 @@ project_all <- snmf("/Users/madelineeppley/Desktop/manta26pub/birostris.geno",
 png("/Users/madelineeppley/Desktop/manta26pub/birostris_CE_allSNPs.png", width=800, height=600)
 plot(project_all, col="blue", pch=19, cex=1.2, main="Cross-entropy: M. birostris - All SNPs")
 dev.off()
-cat("\nCross-entropy (All SNPs):\n")
+print("cross-entropy all SNPs")
 for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_all, K=k)), "\n")
 
 # outlier snps
@@ -246,7 +246,7 @@ project_outliers <- snmf("/Users/madelineeppley/Desktop/manta26pub/birostris_out
 png("/Users/madelineeppley/Desktop/manta26pub/birostris_CE_outlierSNPs.png", width=800, height=600)
 plot(project_outliers, col="red", pch=19, cex=1.2, main="Cross-entropy: M. birostris - Outlier SNPs")
 dev.off()
-cat("\nCross-entropy (Outlier SNPs):\n")
+print("cross-entropy outlier SNPs")
 for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_outliers, K=k)), "\n")
 
 # structure plot with group names
