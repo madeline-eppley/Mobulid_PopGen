@@ -56,3 +56,9 @@ Note only 4 outliers here.
 
 <img width="1586" height="657" alt="Screenshot 2026-06-03 at 11 45 28 AM" src="https://github.com/user-attachments/assets/d8677b6e-ac2a-4d18-900f-53fe624e0986" />
 
+
+## New thurstoni plots
+Note only 13 outliers here
+<img width="4800" height="3600" alt="thurstoni_PCA_outlierSNPs" src="https://github.com/user-attachments/assets/6a681dd8-b823-48dd-b63d-c846b683f87f" />
+
+<img width="891" height="372" alt="Screenshot 2026-06-03 at 11 55 16 AM" src="https://github.com/user-attachments/assets/fea7bdf5-8ccc-4c78-8b20-5d425bc87b9e" />
