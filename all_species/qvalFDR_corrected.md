@@ -1,15 +1,27 @@
 ## pcadapt with qvalue/FDR correction
 
-I realized that I missed a line of code and currently our outliers are just using raw p-vals from pcadapt. 
+I realized that I missed a line of code and currently our outliers are just using raw p-vals from pcadapt. Here's how I corrected the code:
 
-Re-running pcadapt yields the following numbers of q-value/FDR corrected outliers
+```R
+# pcadapt 
+geno_tar <- read.pcadapt("/Users/madelineeppley/Desktop/manta/finalvcfs/tarapacana_final.vcf", type="vcf")
+obj <- pcadapt(geno_tar, K=1)
+pvals <- obj$pvalues
+qvals <- qvalue(pvals)$qvalues
+alpha <- 0.01
+outliers <- which(qvals < alpha)
+n_outliers <- length(outliers)
+n_outliers
+```
 
-Outliers with FDR/qval correction
-Birostris: 4 (originally 165)
-Munkiana: 120 (originally 211)
-Thurstoni: 13 (originally 41)
-Mobular: 260 (originally 1,003)
-Tarapacana: 116 (originally 1,922)
+Re-running pcadapt yields the following numbers of q-value/FDR corrected outliers:
+
+Number of outliers with FDR/qval correction
+- Birostris: 4 (originally 165)
+- Munkiana: 120 (originally 211)
+- Thurstoni: 13 (originally 41)
+- Mobular: 260 (originally 1,003)
+- Tarapacana: 116 (originally 1,922)
 
 
 ## New mobular plot
@@ -17,7 +29,9 @@ This looks extremely similar to the current outlier PCA plot
 <img width="4800" height="3600" alt="mobular_PCA_outlierSNPs" src="https://github.com/user-attachments/assets/94fe714c-2407-4f24-b10c-87bc3407038e" />
 
 ## New munkiana plot
+Same vibes essentially 
 <img width="4800" height="3600" alt="munkiana_PCA_outlierSNPs" src="https://github.com/user-attachments/assets/dd7cb320-484f-470e-8746-9246fc434f54" />
 
 ## New tarapacana plot
+Maybe we see a little more structure here with the Western sample? I think this could aid our discussion
 <img width="4800" height="3600" alt="tarapacana_PCA_outlierSNPs" src="https://github.com/user-attachments/assets/5bb8fb78-8bb0-4082-9e8c-b43030faf2a7" />
