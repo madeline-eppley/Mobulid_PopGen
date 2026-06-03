@@ -34,6 +34,9 @@ Number of outliers with FDR/qval correction
 This looks extremely similar to the current outlier PCA plot
 <img width="4800" height="3600" alt="mobular_PCA_outlierSNPs" src="https://github.com/user-attachments/assets/94fe714c-2407-4f24-b10c-87bc3407038e" />
 
+<img width="1370" height="602" alt="Screenshot 2026-06-03 at 11 51 26 AM" src="https://github.com/user-attachments/assets/6af92a7b-bbb5-4f11-9dcf-f869f2f34c3d" />
+
+
 ## New munkiana plot
 Same vibes essentially 
 <img width="4800" height="3600" alt="munkiana_PCA_outlierSNPs" src="https://github.com/user-attachments/assets/dd7cb320-484f-470e-8746-9246fc434f54" />
