@@ -41,6 +41,9 @@ This looks extremely similar to the current outlier PCA plot
 Same vibes essentially 
 <img width="4800" height="3600" alt="munkiana_PCA_outlierSNPs" src="https://github.com/user-attachments/assets/dd7cb320-484f-470e-8746-9246fc434f54" />
 
+<img width="889" height="374" alt="Screenshot 2026-06-03 at 11 53 30 AM" src="https://github.com/user-attachments/assets/9ff2f17c-da19-4a45-9ab6-5039a55cdc41" />
+
+
 ## New tarapacana plot
 Maybe we see a little more structure here with the Western sample? I think this could aid our discussion
 <img width="4800" height="3600" alt="tarapacana_PCA_outlierSNPs" src="https://github.com/user-attachments/assets/5bb8fb78-8bb0-4082-9e8c-b43030faf2a7" />
