@@ -48,6 +48,8 @@ Same vibes essentially
 Maybe we see a little more structure here with the Western sample? I think this could aid our discussion
 <img width="4800" height="3600" alt="tarapacana_PCA_outlierSNPs" src="https://github.com/user-attachments/assets/5bb8fb78-8bb0-4082-9e8c-b43030faf2a7" />
 
+<img width="908" height="377" alt="Screenshot 2026-06-03 at 12 00 19 PM" src="https://github.com/user-attachments/assets/b7a8de9b-5800-4557-a887-766b626a2e4a" />
+
 
 ## New birostris plots
 Note only 4 outliers here.
