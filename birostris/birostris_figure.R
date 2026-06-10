@@ -1,6 +1,5 @@
 ### M. birostris analysis to produce publication figure ####
-# M. Eppley, v2. current version uploaded to github 4/13/2026
-
+# M. Eppley, v3. current version uploaded to github 6/10/2026
 library(vcfR)
 library(pcadapt)
 library(SNPRelate)
@@ -23,6 +22,7 @@ library(maps)
 library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
+library(qvalue)
 
 outdir <- "/Users/madelineeppley/Desktop/manta26pub"
 dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
@@ -82,7 +82,7 @@ range_map <- ggplot() +
   geom_point(data=sample_coords, aes(x=lon_pacific, y=lat, fill=pop), shape=21, color="black", size=3.5, stroke=0.5, alpha=0.9) +
   scale_fill_manual(values=pop_colors, name="Sampling\nLocation", breaks=c("IND","PER","REV","BYC"),
                     labels=paste0(c("India","Peru","Mexico","Bycatch"), " (n=", pop_n$n[match(c("IND","PER","REV","BYC"), pop_n$pop)], ")")) +
-  coord_cartesian(xlim=c(30, 310), ylim=c(-50, 50), expand=FALSE) +
+  coord_fixed(ratio=1, xlim=c(30, 310), ylim=c(-50, 50), expand=FALSE) +
   scale_x_continuous(breaks=c(60, 120, 180, 240, 300), labels=c("60°E","120°E","180°","120°W","60°W")) +
   scale_y_continuous(breaks=c(-40, -20, 0, 20, 40), labels=c("40°S","20°S","0°","20°N","40°N")) +
   theme_minimal() + theme(legend.position="right", legend.title=element_text(size=13, face="bold"),
@@ -107,6 +107,14 @@ relate <- pheatmap(kin_mat, labels_row=sample_names_rel, labels_col=sample_names
                    annotation_colors=list(Population=pop_colors),
                    clustering_distance_rows="euclidean", clustering_distance_cols="euclidean",
                    main="Pairwise Genomic Relatedness, M. birostris", silent=TRUE)
+write.csv(kin_mat, "/Users/madelineeppley/Desktop/manta26pub/birostris_kinship_matrix.csv")
+diag(kin_mat) <- NA # set as NA so it doesnt return 0.5 as the highest relatedness
+max_rel <- which(kin_mat == max(kin_mat, na.rm=TRUE), arr.ind=TRUE)[1,]
+print(round(max(kin_mat, na.rm=TRUE), 4)) # highest relatedness 0.0936
+print(round(min(kin_mat, na.rm=TRUE), 4)) # lowest relatedness 0.0197
+print(round(mean(kin_mat, na.rm=TRUE), 4)) # mean relatedness 0.0469
+print(rownames(kin_mat)[max_rel[1]]) # REV_15_MB
+print(colnames(kin_mat)[max_rel[2]]) # REV_10_MB
 ggsave("/Users/madelineeppley/Desktop/manta26pub/birostris_relatedness.png", relate, width=10, height=8, dpi=600)
 
 # PCA with all SNPs
@@ -142,8 +150,9 @@ ggsave("/Users/madelineeppley/Desktop/manta26pub/birostris_PCA_allSNPs.png",
 geno_bir <- read.pcadapt("/Users/madelineeppley/Desktop/manta26pub/birostris_22samp.vcf", type = "vcf")
 obj <- pcadapt(geno_bir, K = 1)
 pvals <- obj$pvalues
+qvals <- qvalue(pvals)$qvalues
 alpha <- 0.01
-outliers <- which(pvals < alpha)
+outliers <- which(qvals < alpha)
 n_outliers <- length(outliers)
 n_outliers
 
@@ -218,35 +227,43 @@ ggsave("/Users/madelineeppley/Desktop/manta26pub/birostris_DAPC.png",
        width=8, height=6, dpi=600)
 
 # ancestry proportions with SNMF on all snps
-unlink("/Users/madelineeppley/Desktop/manta26pub/birostris.geno") # 'unlink' worked here when i had to re-run analyses otherwise snmf acts weird and overwrites
-unlink("/Users/madelineeppley/Desktop/manta26pub/birostris.snmfProject", recursive=TRUE)
-unlink("/Users/madelineeppley/Desktop/manta26pub/birostris.snmf", recursive=TRUE)
-vcf2geno("/Users/madelineeppley/Desktop/manta26pub/birostris_22samp.vcf",
-         "/Users/madelineeppley/Desktop/manta26pub/birostris.geno")
-project_all <- snmf("/Users/madelineeppley/Desktop/manta26pub/birostris.geno",
-                    K = 1:5, entropy = TRUE, repetitions = 10, project = "new")
+## JUST RELOAD
+# needed to double-check k values, re-load
+project_all <- load.snmfProject("/Users/madelineeppley/Desktop/manta26pub/birostris.snmfProject")
+project_outliers <- load.snmfProject("/Users/madelineeppley/Desktop/manta26pub/birostris_outliers.snmfProject")
+for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_all, K=k)), "\n") # lowest k = 1, 0.749
+for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_outliers, K=k)), "\n") # lowest k = 3, 0.040
+
+# to run again from the start:
+#unlink("/Users/madelineeppley/Desktop/manta26pub/birostris.geno") # 'unlink' worked here when i had to re-run analyses otherwise snmf acts weird and overwrites
+#unlink("/Users/madelineeppley/Desktop/manta26pub/birostris.snmfProject", recursive=TRUE)
+#unlink("/Users/madelineeppley/Desktop/manta26pub/birostris.snmf", recursive=TRUE)
+#vcf2geno("/Users/madelineeppley/Desktop/manta26pub/birostris_22samp.vcf",
+ #        "/Users/madelineeppley/Desktop/manta26pub/birostris.geno")
+#project_all <- snmf("/Users/madelineeppley/Desktop/manta26pub/birostris.geno",
+  #                  K = 1:5, entropy = TRUE, repetitions = 10, project = "new")
 
 # cross-entropy plot all SNPs
 png("/Users/madelineeppley/Desktop/manta26pub/birostris_CE_allSNPs.png", width=800, height=600)
 plot(project_all, col="blue", pch=19, cex=1.2, main="Cross-entropy: M. birostris - All SNPs")
 dev.off()
-print("cross-entropy all SNPs")
+print("cross entropy all snps")
 for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_all, K=k)), "\n")
 
 # outlier snps
-unlink("/Users/madelineeppley/Desktop/manta26pub/birostris_outliers.geno")
-unlink("/Users/madelineeppley/Desktop/manta26pub/birostris_outliers.snmfProject", recursive=TRUE)
-unlink("/Users/madelineeppley/Desktop/manta26pub/birostris_outliers.snmf", recursive=TRUE)
-vcf2geno("/Users/madelineeppley/Desktop/manta26pub/birostris_outliers.vcf",
-         "/Users/madelineeppley/Desktop/manta26pub/birostris_outliers.geno")
-project_outliers <- snmf("/Users/madelineeppley/Desktop/manta26pub/birostris_outliers.geno",
-                         K = 1:5, entropy = TRUE, repetitions = 10, project = "new")
+#unlink("/Users/madelineeppley/Desktop/manta26pub/birostris_outliers.geno")
+#unlink("/Users/madelineeppley/Desktop/manta26pub/birostris_outliers.snmfProject", recursive=TRUE)
+#unlink("/Users/madelineeppley/Desktop/manta26pub/birostris_outliers.snmf", recursive=TRUE)
+#vcf2geno("/Users/madelineeppley/Desktop/manta26pub/birostris_outliers.vcf",
+ #        "/Users/madelineeppley/Desktop/manta26pub/birostris_outliers.geno")
+#project_outliers <- snmf("/Users/madelineeppley/Desktop/manta26pub/birostris_outliers.geno",
+ #                        K = 1:5, entropy = TRUE, repetitions = 10, project = "new")
 
 # cross-entropy plot outlier snps
 png("/Users/madelineeppley/Desktop/manta26pub/birostris_CE_outlierSNPs.png", width=800, height=600)
 plot(project_outliers, col="red", pch=19, cex=1.2, main="Cross-entropy: M. birostris - Outlier SNPs")
 dev.off()
-print("cross-entropy outlier SNPs")
+print("cross entropy outlier snps")
 for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_outliers, K=k)), "\n")
 
 # structure plot with group names
@@ -292,10 +309,10 @@ structure_all <- ggplot(qdf_all_long, aes(x = x_pos, y = Proportion, fill = Clus
         legend.position="none", panel.grid=element_blank(),
         plot.margin=margin(5, 30, 2, 5))
 
-# K=2 outlier snps
-ce_out <- cross.entropy(project_outliers, K = 2)
+# K=3 outlier snps
+ce_out <- cross.entropy(project_outliers, K = 3)
 best_run_out <- which.min(ce_out)
-qmat_out <- Q(project_outliers, K = 2, run = best_run_out)
+qmat_out <- Q(project_outliers, K = 3, run = best_run_out)
 qdf_out_str <- as.data.frame(qmat_out)
 colnames(qdf_out_str) <- paste0("Cluster", 1:2)
 qdf_out_str$Sample <- sample_names
@@ -339,8 +356,8 @@ genI <- gl2gi(gl_bir)
 pops_gi <- genI$pop; strata(genI) <- data.frame(pops = pops_gi)
 p.amova <- poppr.amova(genI, ~pops)
 amova.pvalues <- ade4::randtest(p.amova, nrepet = 9999)
-overall_fst <- p.amova$statphi$Phi[length(p.amova$statphi$Phi)]
-overall_pval <- amova.pvalues$pvalue[1]
+overall_fst <- p.amova$statphi$Phi[length(p.amova$statphi$Phi)] # 0.003964456
+overall_pval <- amova.pvalues$pvalue[1] # 0.9479
 
 # fst but excluding BYC (n=1)
 pop_sizes <- table(pop(gl_bir))
@@ -351,7 +368,7 @@ fst_matrix <- fst_result$Fsts
 fst_matrix[is.na(fst_matrix)] <- t(fst_matrix)[is.na(fst_matrix)]
 
 pval_matrix <- matrix(NA, nrow=nrow(fst_matrix), ncol=ncol(fst_matrix), dimnames=dimnames(fst_matrix))
-cat("\n=== PAIRWISE AMOVA ===\n")
+print("pairwise amova")
 for(i in 1:(nrow(fst_matrix)-1)) {
   for(j in (i+1):ncol(fst_matrix)) {
     p1 <- rownames(fst_matrix)[i]; p2 <- colnames(fst_matrix)[j]
@@ -359,6 +376,53 @@ for(i in 1:(nrow(fst_matrix)-1)) {
       res <- pairwise_amova(genI, p1, p2)
       pval_matrix[i,j] <- res$p_value; pval_matrix[j,i] <- res$p_value
       cat(p1, "vs", p2, ": FST =", round(fst_matrix[i,j], 4), ", p =", round(res$p_value, 4), "\n")}}}
+
+## outlier fst
+table(ploidy(gl_outliers)) # 18 of the 22 inds are assigned ploidy 1 because there are no heterozygous calls across the 4 SNPs
+ploidy(gl_outliers) <- 2 # set ploidy to 2 for all
+nLoc(gl_outliers) # 4 outliers
+pop(gl_outliers) <- popmap$pop[match(indNames(gl_outliers), popmap$sample)]
+genI_out <- gl2gi(gl_outliers)
+pops_gi_out <- genI_out$pop
+strata(genI_out) <- data.frame(pops = pops_gi_out)
+
+p.amova_out      <- poppr.amova(genI_out, ~pops)
+amova.pvalues_out <- ade4::randtest(p.amova_out, nrepet = 9999)
+overall_fst_out  <- p.amova_out$statphi$Phi[length(p.amova_out$statphi$Phi)]
+overall_pval_out <- amova.pvalues_out$pvalue[1]
+
+# outlier amova fst and pval
+round(overall_fst_out, 4) # fst = 0.3249
+round(overall_pval_out, 4) # p = 0.368
+
+# pairwise FST excluding BYC (n=1)
+pop_sizes_out  <- table(pop(gl_outliers))
+valid_pops_out <- names(pop_sizes_out[pop_sizes_out >= 2])
+gl_valid_out   <- gl_outliers[pop(gl_outliers) %in% valid_pops_out, ]
+
+fst_result_out <- gl.fst.pop(gl_valid_out, nboots=1000, percent=95, nclusters=1)
+fst_matrix_out <- fst_result_out$Fsts
+fst_matrix_out[is.na(fst_matrix_out)] <- t(fst_matrix_out)[is.na(fst_matrix_out)]
+
+pval_matrix_out <- matrix(NA, nrow=nrow(fst_matrix_out), ncol=ncol(fst_matrix_out),
+                          dimnames=dimnames(fst_matrix_out))
+
+# pairwise amova outlier snps
+for(i in 1:(nrow(fst_matrix_out)-1)) {
+  for(j in (i+1):ncol(fst_matrix_out)) {
+    p1 <- rownames(fst_matrix_out)[i]; p2 <- colnames(fst_matrix_out)[j]
+    if(pop_sizes_out[p1] >= 2 & pop_sizes_out[p2] >= 2) {
+      res <- pairwise_amova(genI_out, p1, p2)
+      pval_matrix_out[i,j] <- res$p_value; pval_matrix_out[j,i] <- res$p_value
+      cat(p1, "vs", p2, ": FST =", round(fst_matrix_out[i,j], 4),
+          ", p =", round(res$p_value, 4), "\n")}}}
+
+stars <- function(p) ifelse(is.na(p), "",
+                            ifelse(p < 0.001, "***",
+                                   ifelse(p < 0.01,  "**",
+                                          ifelse(p < 0.05,  "*", ""))))
+cat("  All-loci FST =", round(overall_fst, 4),  stars(overall_pval),     "\n")
+cat("  Outlier FST  =", round(overall_fst_out,4), stars(overall_pval_out), "\n")
 
 get_upper_tri <- function(mat) { mat[lower.tri(mat)] <- NA; return(mat) }
 fst_matrix_labeled <- fst_matrix
@@ -395,7 +459,7 @@ layer3 <- wrap_plots(structure_all, structure_outlier, pop_label_plot, ncol=1, h
 layer4 <- wrap_plots(fst_heatmap + theme(legend.position="right"), dapc_plot, ncol=2, widths=c(0.8, 1.2))
 
 final_figure <- wrap_plots(layer1, layer2, layer3, layer4,
-                           ncol=1, heights=c(0.7, 1.1, 0.8, 1.0)) +
+                           ncol=1, heights=c(1.1, 1.1, 0.8, 1.0)) +
   plot_annotation(
     title = "Mobula birostris",
     subtitle = paste0("All SNPs: n = ", format(n_snps_all, big.mark=","),
