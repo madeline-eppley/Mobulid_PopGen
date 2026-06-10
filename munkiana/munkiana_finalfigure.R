@@ -1,5 +1,5 @@
 ### M. munkiana analysis to produce publication figure ####
-# M. Eppley, v2. current version uploaded to github 4/14/2026
+# M. Eppley, v3. current version uploaded to github 6/10/2026
 
 library(vcfR)
 library(pcadapt)
@@ -23,6 +23,7 @@ library(maps)
 library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
+library(qvalue)
 
 outdir <- "/Users/madelineeppley/Desktop/manta26pub"
 dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
@@ -41,7 +42,8 @@ popmap <- data.frame(
 gl_mun <- vcfR2genlight(vcf_mun)
 pop(gl_mun) <- popmap$pop[match(indNames(gl_mun), popmap$sample)]
 n_snps_all <- nrow(vcf_mun@fix)
-cat("Munkiana:", nInd(gl_mun), "individuals,", n_snps_all, "SNPs\n")
+print(nInd(gl_mun))
+print(n_snps_all)
 print(table(pop(gl_mun)))
 
 pop_labels_df <- data.frame(pop=c("MEX","NIC","PER"), pop_label=c("Mexico","Nicaragua","Peru"))
@@ -85,6 +87,14 @@ annotation_df <- data.frame(Population=popmap$pop[match(sample_names_rel,popmap$
 relate <- pheatmap(kin_mat,labels_row=sample_names_rel,labels_col=sample_names_rel,annotation_row=annotation_df,annotation_col=annotation_df,
                    annotation_colors=list(Population=pop_colors),clustering_distance_rows="euclidean",clustering_distance_cols="euclidean",
                    main="Pairwise Genomic Relatedness, M. munkiana",silent=TRUE)
+write.csv(kin_mat, "/Users/madelineeppley/Desktop/manta26pub/munkiana_kinship_matrix.csv")
+diag(kin_mat) <- NA # set as NA so it doesnt return 0.5 as the highest relatedness
+max_rel <- which(kin_mat == max(kin_mat, na.rm=TRUE), arr.ind=TRUE)[1,]
+print(round(max(kin_mat, na.rm=TRUE), 4)) # highest relatedness 0.1189
+print(round(min(kin_mat, na.rm=TRUE), 4)) # lowest relatedness 0.0437
+print(round(mean(kin_mat, na.rm=TRUE), 4)) # mean relatedness 0.0879
+print(rownames(kin_mat)[max_rel[1]]) # mu_7
+print(colnames(kin_mat)[max_rel[2]]) # mu_4
 ggsave("/Users/madelineeppley/Desktop/manta26pub/munkiana_relatedness.png", relate, width=10, height=8, dpi=600)
 
 # pca using all snps
@@ -109,8 +119,14 @@ ggsave("/Users/madelineeppley/Desktop/manta26pub/munkiana_PCA_allSNPs.png",
 
 # pcadapt
 geno_mun <- read.pcadapt("/Users/madelineeppley/Desktop/manta/finalvcfs/munkiana_filtered_7188snps.vcf",type="vcf")
-obj <- pcadapt(geno_mun,K=1); pvals <- obj$pvalues; outliers <- which(pvals<0.01); n_outliers <- length(outliers)
-n_outliers
+obj <- pcadapt(geno_mun,K=1)
+pvals <- obj$pvalues
+qvals <- qvalue(pvals)$qvalues
+alpha <- 0.01
+outliers <- which(qvals < alpha)
+n_outliers <- length(outliers)
+n_outliers # 120
+
 vcf_out <- vcf_mun; vcf_out@fix <- vcf_mun@fix[outliers,,drop=FALSE]; vcf_out@gt <- vcf_mun@gt[outliers,,drop=FALSE]
 write.vcf(vcf_out,"/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.vcf.gz"); system(paste0("gunzip -f ","/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.vcf.gz"))
 
@@ -156,30 +172,38 @@ ggsave("/Users/madelineeppley/Desktop/manta26pub/munkiana_DAPC.png",
        dapc_plot+labs(title="Mobula munkiana")+theme(legend.position="bottom",legend.direction="horizontal",legend.title=element_blank(),
                                                      plot.title=element_text(size=13,face="italic",hjust=0.5))+guides(fill=guide_legend(override.aes=list(shape=21,size=5,alpha=0.8))),width=8,height=6,dpi=600)
 
-# snmf ancestry
-unlink("/Users/madelineeppley/Desktop/manta26pub/munkiana.geno")
-unlink("/Users/madelineeppley/Desktop/manta26pub/munkiana.snmfProject", recursive=TRUE)
-unlink("/Users/madelineeppley/Desktop/manta26pub/munkiana.snmf", recursive=TRUE)
-vcf2geno("/Users/madelineeppley/Desktop/manta/finalvcfs/munkiana_filtered_7188snps.vcf","/Users/madelineeppley/Desktop/manta26pub/munkiana.geno")
-project_all <- snmf("/Users/madelineeppley/Desktop/manta26pub/munkiana.geno", K=1:5, entropy=TRUE, repetitions=10, project="new")
+# snmf ancestry to run again from the start:
+#unlink("/Users/madelineeppley/Desktop/manta26pub/munkiana.geno")
+#unlink("/Users/madelineeppley/Desktop/manta26pub/munkiana.snmfProject", recursive=TRUE)
+#unlink("/Users/madelineeppley/Desktop/manta26pub/munkiana.snmf", recursive=TRUE)
+#vcf2geno("/Users/madelineeppley/Desktop/manta/finalvcfs/munkiana_filtered_7188snps.vcf","/Users/madelineeppley/Desktop/manta26pub/munkiana.geno")
+#project_all <- snmf("/Users/madelineeppley/Desktop/manta26pub/munkiana.geno", K=1:5, entropy=TRUE, repetitions=10, project="new")
+
+#unlink("/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.geno")
+#unlink("/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.snmfProject", recursive=TRUE)
+#unlink("/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.snmf", recursive=TRUE)
+#vcf2geno("/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.vcf",
+    #     "/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.geno")
+#project_outliers <- snmf("/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.geno",K=1:5,entropy=TRUE,repetitions=10,project="new")
+
+# ancestry proportions with SNMF on all snps
+## JUST RELOAD
+# needed to double-check k values, re-load
+project_all <- load.snmfProject("/Users/madelineeppley/Desktop/manta26pub/munkiana.snmfProject")
+project_outliers <- load.snmfProject("/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.snmfProject")
+for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_all, K=k)), "\n") # lowest k = 1, 0.8984
+for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_outliers, K=k)), "\n") # lowest k = 2, 0.1935
 
 # ce plot for all snps
 png("/Users/madelineeppley/Desktop/manta26pub/munkiana_CE_allSNPs.png", width=800, height=600)
 plot(project_all, col="blue", pch=19, cex=1.2, main="Cross-entropy: M. munkiana - All SNPs")
 dev.off()
 for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_all, K=k)), "\n")
-unlink("/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.geno")
-unlink("/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.snmfProject", recursive=TRUE)
-unlink("/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.snmf", recursive=TRUE)
-vcf2geno("/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.vcf",
-         "/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.geno")
-project_outliers <- snmf("/Users/madelineeppley/Desktop/manta26pub/munkiana_outliers.geno",K=1:5,entropy=TRUE,repetitions=10,project="new")
 
 # ce plot for outlier snps
 png("/Users/madelineeppley/Desktop/manta26pub/munkiana_CE_outlierSNPs.png", width=800, height=600)
 plot(project_outliers, col="red", pch=19, cex=1.2, main="Cross-entropy: M. munkiana - Outlier SNPs")
 dev.off()
-for(k in 1:5) cat("K =", k, ":", min(cross.entropy(project_outliers, K=k)), "\n")
 
 sample_names <- indNames(gl_mun); sample_pops <- pop(gl_mun)
 pop_order <- c("MEX","NIC","PER"); pop_names_map <- c("MEX"="Mexico","NIC"="Nicaragua","PER"="Peru")
@@ -230,6 +254,9 @@ genI <- gl2gi(gl_mun); pops_gi <- genI$pop; strata(genI) <- data.frame(pops=pops
 p.amova <- poppr.amova(genI,~pops); amova.pvalues <- ade4::randtest(p.amova,nrepet=9999)
 overall_fst <- p.amova$statphi$Phi[length(p.amova$statphi$Phi)]; overall_pval <- amova.pvalues$pvalue[1]
 
+overall_fst #0.0137
+overall_pval #0.9693
+
 fst_result <- gl.fst.pop(gl_mun,nboots=1000,percent=95,nclusters=1)
 fst_matrix <- fst_result$Fsts; fst_matrix[is.na(fst_matrix)] <- t(fst_matrix)[is.na(fst_matrix)]
 pop_sizes <- table(pop(gl_mun))
@@ -240,6 +267,54 @@ for(i in 1:(nrow(fst_matrix)-1)){for(j in (i+1):ncol(fst_matrix)){
   if(pop_sizes[p1]>=2 & pop_sizes[p2]>=2){
     res <- pairwise_amova(genI,p1,p2); pval_matrix[i,j] <- res$p_value; pval_matrix[j,i] <- res$p_value
     cat(p1,"vs",p2,": FST =",round(fst_matrix[i,j],4),", p =",round(res$p_value,4),"\n")}}}
+
+## outlier fst
+table(ploidy(gl_outliers)) #4 of the inds are assigned ploidy 1 because there are no heterozygous calls across the 4 SNPs
+ploidy(gl_outliers) <- 2 # set ploidy to 2 for all
+nLoc(gl_outliers) # 120 outliers
+pop(gl_outliers) <- popmap$pop[match(indNames(gl_outliers), popmap$sample)]
+genI_out <- gl2gi(gl_outliers)
+pops_gi_out <- genI_out$pop
+strata(genI_out) <- data.frame(pops = pops_gi_out)
+
+p.amova_out <- poppr.amova(genI_out, ~pops)
+amova.pvalues_out <- ade4::randtest(p.amova_out, nrepet = 9999)
+overall_fst_out <- p.amova_out$statphi$Phi[length(p.amova_out$statphi$Phi)]
+overall_pval_out <- amova.pvalues_out$pvalue[1]
+
+# outlier amova fst and pval
+round(overall_fst_out, 4) # fst = 0.4303
+round(overall_pval_out, 4) # p = 0.9017
+
+# pairwise outlier FST
+pop_sizes_out  <- table(pop(gl_outliers))
+valid_pops_out <- names(pop_sizes_out[pop_sizes_out >= 2])
+gl_valid_out   <- gl_outliers[pop(gl_outliers) %in% valid_pops_out, ]
+
+fst_result_out <- gl.fst.pop(gl_valid_out, nboots=1000, percent=95, nclusters=1)
+fst_matrix_out <- fst_result_out$Fsts
+fst_matrix_out[is.na(fst_matrix_out)] <- t(fst_matrix_out)[is.na(fst_matrix_out)]
+
+pval_matrix_out <- matrix(NA, nrow=nrow(fst_matrix_out), ncol=ncol(fst_matrix_out),
+                          dimnames=dimnames(fst_matrix_out))
+
+# pairwise amova outlier snps
+for(i in 1:(nrow(fst_matrix_out)-1)) {
+  for(j in (i+1):ncol(fst_matrix_out)) {
+    p1 <- rownames(fst_matrix_out)[i]; p2 <- colnames(fst_matrix_out)[j]
+    if(pop_sizes_out[p1] >= 2 & pop_sizes_out[p2] >= 2) {
+      res <- pairwise_amova(genI_out, p1, p2)
+      pval_matrix_out[i,j] <- res$p_value; pval_matrix_out[j,i] <- res$p_value
+      cat(p1, "vs", p2, ": FST =", round(fst_matrix_out[i,j], 4),
+          ", p =", round(res$p_value, 4), "\n")}}}
+
+stars <- function(p) ifelse(is.na(p), "",
+                            ifelse(p < 0.001, "***",
+                                   ifelse(p < 0.01,  "**",
+                                          ifelse(p < 0.05,  "*", ""))))
+cat("  All-loci FST =", round(overall_fst, 4),  stars(overall_pval),     "\n")
+cat("  Outlier FST  =", round(overall_fst_out,4), stars(overall_pval_out), "\n")
+
 
 get_upper_tri <- function(mat){mat[lower.tri(mat)]<-NA;return(mat)}
 pop_name_map_mun <- c("MEX"="Mexico","NIC"="Nicaragua","PER"="Peru")
@@ -272,3 +347,4 @@ final_figure <- wrap_plots(layer1,layer2,layer3,layer4,ncol=1,heights=c(0.8,1.1,
                   tag_levels=list(c('A','B','C','D','E','','F','G')),
                   theme=theme(plot.title=element_text(size=18,face="bold.italic",hjust=0),plot.subtitle=element_text(size=14,hjust=0),plot.tag=element_text(size=16,face="bold")))
 ggsave("/Users/madelineeppley/Desktop/manta26pub/munkiana_FINALFIGURE.png", final_figure, width=14, height=18, dpi=600)
+
