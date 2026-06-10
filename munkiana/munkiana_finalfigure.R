@@ -269,7 +269,7 @@ for(i in 1:(nrow(fst_matrix)-1)){for(j in (i+1):ncol(fst_matrix)){
     cat(p1,"vs",p2,": FST =",round(fst_matrix[i,j],4),", p =",round(res$p_value,4),"\n")}}}
 
 ## outlier fst
-table(ploidy(gl_outliers)) #4 of the inds are assigned ploidy 1 because there are no heterozygous calls across the 4 SNPs
+table(ploidy(gl_outliers)) #4 of the inds are assigned ploidy 1 because there are no heterozygous calls across the SNPs
 ploidy(gl_outliers) <- 2 # set ploidy to 2 for all
 nLoc(gl_outliers) # 120 outliers
 pop(gl_outliers) <- popmap$pop[match(indNames(gl_outliers), popmap$sample)]
