@@ -15,7 +15,7 @@ overall_fst <- p.amova$statphi$Phi[length(p.amova$statphi$Phi)] # 0.003964456
 # updated 10/7/26
 print(amova.pvalues) # take row 3 from here for variation between pops 
 overall_pval <- amova.pvalues$pvalue[length(amova.pvalues$pvalue)]
-overall_pval
+overall_pval # 9e-04
 
 # fst but excluding BYC (n=1)
 pop_sizes <- table(pop(gl_bir))
