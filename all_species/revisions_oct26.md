@@ -125,8 +125,8 @@ amova.pvalues_neu <- ade4::randtest(p.amova_neu, nrepet = 9999)
 print(amova.pvalues_neu)
 overall_fst_neu <- p.amova_neu$statphi$Phi[length(p.amova_neu$statphi$Phi)]
 overall_pval_neu <- amova.pvalues_neu$pvalue[length(amova.pvalues_neu$pvalue)]
-round(overall_fst_neu, 4)
-round(overall_pval_neu, 4)
+round(overall_fst_neu, 4) # 0.0038
+round(overall_pval_neu, 4) # 0.0012
 ```
 
 ### Birostris
