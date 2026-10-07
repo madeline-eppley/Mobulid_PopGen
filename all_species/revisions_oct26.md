@@ -5,6 +5,38 @@ The reviewer noted that the "reported AMOVA / outlier p-values appear inverted o
 I found the issue in the code, which is that the AMOVA test reports 3 p-values, and my code was taking the first one. The first value was testing heterozygosity within individuals, but we needed to report the differences between populations. 
 So, I replaced `pvalue[1]` in the code with `pvalue[length(pvalue)]`. 
 
+```R
+# amova FST
+genI <- gl2gi(gl_bir)
+pops_gi <- genI$pop; strata(genI) <- data.frame(pops = pops_gi)
+p.amova <- poppr.amova(genI, ~pops)
+amova.pvalues <- ade4::randtest(p.amova, nrepet = 9999)
+overall_fst <- p.amova$statphi$Phi[length(p.amova$statphi$Phi)] # 0.003964456
+# updated 10/7/26
+print(amova.pvalues) # take row 3 from here for variation between pops 
+overall_pval <- amova.pvalues$pvalue[length(amova.pvalues$pvalue)]
+overall_pval
+
+# fst but excluding BYC (n=1)
+pop_sizes <- table(pop(gl_bir))
+valid_pops <- names(pop_sizes[pop_sizes >= 2])
+gl_valid <- gl_bir[pop(gl_bir) %in% valid_pops, ]
+fst_result <- gl.fst.pop(gl_valid, nboots=1000, percent=95, nclusters=1)
+fst_matrix <- fst_result$Fsts
+fst_matrix[is.na(fst_matrix)] <- t(fst_matrix)[is.na(fst_matrix)]
+
+# updated 10/7/26
+pval_matrix <- fst_result$Pvalues
+pval_matrix[is.na(pval_matrix)] <- t(pval_matrix)[is.na(pval_matrix)]
+print("pairwise fst")
+print(round(fst_matrix, 4))
+print(pval_matrix)
+## ok so noting the revision here, the results show significant comparisons between india-peru and india-mexico but not peru-mexico
+# FST India vs Peru = 0.0067, p = 0 significant
+# FST India vs Mexico = 0.0055, p = 0 significant 
+# FST Peru vs Mexico = 0.0006, p= 0.278 not significant
+```
+
 
 #### 2. Outlier FST not tested
 The reviewer said "the outlier FST values are not significance-tested"
@@ -59,6 +91,23 @@ outliers # 1081 1676 4995 8161 same as above
 #### 4. Pairwise p-values
 The pairwise FST values originally came from `gl.fst.pop` but the p-values were also coming from the AMOVA test which had the same code issue as above. Instead of fixing the AMOVA, I'm just going to get rid of that here and pull the p-values from the `gl.fst.pop` output. 
 
+```R
+# pairwise FST excluding BYC (n=1)
+pop_sizes_out  <- table(pop(gl_outliers))
+valid_pops_out <- names(pop_sizes_out[pop_sizes_out >= 2])
+gl_valid_out   <- gl_outliers[pop(gl_outliers) %in% valid_pops_out, ]
+
+fst_result_out <- gl.fst.pop(gl_valid_out, nboots=1000, percent=95, nclusters=1)
+fst_matrix_out <- fst_result_out$Fsts
+fst_matrix_out[is.na(fst_matrix_out)] <- t(fst_matrix_out)[is.na(fst_matrix_out)]
+
+# updated 10/7/26
+pval_matrix_out <- fst_result_out$Pvalues
+pval_matrix_out[is.na(pval_matrix_out)] <- t(pval_matrix_out)[is.na(pval_matrix_out)]
+print("pairwise fst outlier snps")
+print(round(fst_matrix_out, 4))
+print(pval_matrix_out)
+```
 
 #### 5. Neutral loci FST 
 There was an outdated set of neutral loci in this calculation, so I updated the script to use the correct set of neutral loci and re-calcluated with a fixed AMOVA. 
