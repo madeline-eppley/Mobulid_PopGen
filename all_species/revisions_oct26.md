@@ -135,3 +135,33 @@ round(overall_pval_neu, 4) # 0.0012
 3. Bonferroni correction: It was actually the same for birostris (n=4, same loci) that were outliers from both significance tests.
 4. Pairwise p-values: India vs Peru and India vs Mexico are significant (p < 0.001) but Peru vs Mexico is not (p = 0.278)
 5. Neutral loci FST: Updated to 12,041 neutral loci, FST changes to 0.0038, p = 0.0012 (sig)
+
+### Mobular
+1. AMOVA p-values: Changed from p = 0.4106 (not sig) to 0.0752 (sig)
+2. Outlier FST:
+3. Bonferroni correction: 217 outliers (vs 260 with prior sig. test)
+4. Pairwise p-values: East vs Cent and East vs West are sig. diff but West vs Cent are not
+5. Neutral loci FST: Updated to 51676 neutral loci, FST changes to 
+
+### Thurstoni
+1. AMOVA p-values:
+2. Outlier FST:
+3. Bonferroni correction:
+4. Pairwise p-values:
+5. Neutral loci FST:
+
+### Munkiana
+1. AMOVA p-values:
+2. Outlier FST:
+3. Bonferroni correction:
+4. Pairwise p-values:
+5. Neutral loci FST:
+
+### Tarapacana
+1. AMOVA p-values:
+2. Outlier FST:
+3. Bonferroni correction:
+4. Pairwise p-values:
+5. Neutral loci FST:
+
+
